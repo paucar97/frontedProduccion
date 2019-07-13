@@ -40,8 +40,8 @@ app.config(function ($routeProvider, $httpProvider) {
             controller: 'EstadisticasController'
         })
 
-        .when('/verEncuestas',{
-            templateUrl:'app/modules/curso/VerEncuestas.html?v=' + Date.now(),
+        .when('/verEncuestas', {
+            templateUrl: 'app/modules/curso/VerEncuestas.html?v=' + Date.now(),
             controller: 'VerEncuestasController'
         })
 

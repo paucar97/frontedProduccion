@@ -4,7 +4,7 @@
     <h2 class="btn btn-link" style="font-size: 2rem" data-toggle="collapse" data-target="#acts">Actividades</h2>
     <div class="collapse" id="acts">
         <div class="row justify-content-between">
-            <div class="col-xs-12 col-md-3">
+            <div class="col-xs-12 col-md-4">
                 <h5 style="display:inline-block"><span class="badge badge-pill badge-success">
                         <div style="margin: 5px">En curso</div>
                     </span></h5>
@@ -86,8 +86,8 @@
             <div>
             </div>
             <div class="col-xs-12 col-sm-8 col-md-4 col-lg-2">
-                <button class="btn btn-success" ng-click="btnAgregarAgrupacion()" ng-show="!existeAgrupaciones"><i
-                        class="fas fa-plus"></i>&nbspAgregar
+                <button class="btn btn-success" ng-click="btnAgregarAgrupacion()"
+                    ng-show="!existeAgrupaciones || usuario.profesor"><i class="fas fa-plus"></i>&nbspAgregar
                     agrupación</button>
             </div>
         </div>

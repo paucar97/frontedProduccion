@@ -22,7 +22,10 @@
         return;
       }
       var usuario = res.data;
-      $rootScope.user = res.data;
+      usuario.alumno = 0;
+      usuario.profesor = 0;
+      usuario.jp = 0;
+      $rootScope.user = usuario;
       $cookies.putObject('usuario', usuario);
       $scope.showAlert2 = false;
       location.href = indexURL + 'main';
