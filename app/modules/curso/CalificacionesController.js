@@ -249,6 +249,13 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     }
 
     $scope.btnGuardarPuntaje = function () {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false,
+        })
         for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
             if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion != 3) {
                 if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 1) {
@@ -261,21 +268,29 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                                 })
                                 return;
                             }
+                            //if($scope.rubrica.listaNotaAspectos[i])
                         }
 
                     }
                 }
             }
         }
+
+        for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++){
+            if($scope.rubrica.listaNotaAspectos[i].nota>$scope.rubrica.listaNotaAspectos[i].puntajeMax){
+                swalWithBootstrapButtons.fire({
+                    title:'¡Eror!',
+                    text:'No se pueden ingresar puntajes mayores a los máximos establecidos.',
+                    type:'error',
+                    
+                })
+                return;
+            }
+        }
+
         if ($scope.falta == false) {
             if (formCal.checkValidity()) {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger'
-                    },
-                    buttonsStyling: false,
-                })
+                
 
                 swalWithBootstrapButtons.fire({
                     title: 'Está seguro que quiere calificar al alumno con la nota "' + $scope.notaFinal + '" ?',
