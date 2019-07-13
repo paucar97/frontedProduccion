@@ -249,7 +249,7 @@
           </select>
         </div>
     
-        <div ng-repeat="categoria in regEsfuerzoHoras.listaCategorias">
+        <div style="margin-left: 2%" ng-repeat="categoria in regEsfuerzoHoras.listaCategorias">
           <div class="form-row">
             <div class="form-group col-md-5 col-lg-4">
               <label class="negrita">Categorías</label>
@@ -257,7 +257,7 @@
                 ng-model="categoria.descripcion" />
             </div>
           </div>
-          <div ng-repeat="respuesta in categoria.listaRespuestas">
+          <div style="margin-left: 2%" ng-repeat="respuesta in categoria.listaRespuestas">
             <div class="form-row">
               <div class="form-group col-md-2" style="width: 70px">
                 <label class="negrita">Respuesta</label>
@@ -301,7 +301,7 @@
         <button type="button" class="btn btn-success" ng-click="btnAgregarCategoria()"><i
             class="fas fa-plus"></i>Agregar Aspecto&nbsp;</button>
       </div>
-      <div ng-repeat="categoria in regEsfuerzo.listaCategorias">
+      <div ng-repeat="categoria in regEsfuerzo.listaCategorias" style="margin-left: 1%">
         <div class="form-row">
           <div class="form-group col-md-6">
             <label class="negrita">Descripción del esfuerzo</label>
