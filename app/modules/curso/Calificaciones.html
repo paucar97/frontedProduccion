@@ -68,6 +68,8 @@
                 <button ng-show="!usuario.alumno && profe" class="btn btn-success" type="submit"
                     ng-click="btnValidarPuntaje()">Validar
                     Resultados</button>
+                <button ng-show="!usuario.alumno" type="submit" class="btn btn-success"
+                    ng-click="mostrarnotaFinal()">&nbsp;Calcular Nota</button>
             </div>
         </div>
     </div>
@@ -147,7 +149,7 @@
                                 <label style="color: rgb(5, 5, 5)"><b> Nota</b></label>
                                 <input onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                     ng-disabled="flgCalificado" class="form-control" type="text" style="width: 50px"
-                                    ng-model="aspecto.nota" maxlength="2" required>
+                                    ng-model="aspecto.nota" maxlength="2" required ng-keyup="sumarNotaFinal(aspecto.nota)">
                             </div>
                             <div class="form-group col-sm-3">
                                 <label style="color: rgb(5, 5, 5)"><b> Comentarios</b></label>
@@ -217,7 +219,7 @@
                             <div class="col-4" ng-if="aspecto.tipoClasificacion==1">
                                 <label style="color: rgb(5, 5, 5)"><b> Nota aspecto</b></label>
                                 <input onkeypress="return event.charCode >= 48 && event.charCode <= 57" readonly type="text"
-                                    class="form-control" ng-model="aspecto.nota" style="width: 50px" required>
+                                    class="form-control" ng-model="aspecto.nota" style="width: 50px" required ng-keyup="sumarNotaFinal(aspecto.nota)">
     
                             </div>
 
