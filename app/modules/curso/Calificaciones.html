@@ -46,7 +46,7 @@
             <label style="font-weight: bold">No asistió</label>
             <input ng-disabled="flgCalificado" ng-model="falta" ng-click="marcado()" type="checkbox">
         </div>
-        <div class="col-md-12" ng-id="usuario.alumno">
+        <div class="col-md-12" ng-show="actividad.flgEntregable==1">
             <div>
                 <h5>Entregables</h5>
             </div>
@@ -55,7 +55,7 @@
                     ng-click="descargarArchivo(arch)">{{arch.urlEntregable == null ? arch.nombreArchivo : arch.urlEntregable}}</a>
             </div>
         </div>
-        <div class="form-group col-md-9 row" ng-if="usuario.alumno">
+        <div class="form-group col-md-9 row" ng-show="usuario.alumno && actividad.flgEntregable==1">
             <div class="col-md-4 form-group">
                 <label for="file">Elegir archivo(s)</label>
                 <input type="file" class="form-control-file" id="file" name="file" multiple>
@@ -70,8 +70,8 @@
         </div>
         <div ng-show="idalumno!='0' || idgrupo!='0'" class="form-group col-md-3">
             <div>
-
-                <button ng-show="flgCalificado && (usuario.profesor)" type="button" class="btn btn-warning"
+                <!-- PuedeEditar() ---- ng-show= "!usuario.alumno && flgCalificado"-->
+                <button ng-show= "mostrareditar" type="button" class="btn btn-warning" 
                     ng-click="btnEditar()"><i class="fas fa-pen"></i>&nbsp;Editar</button>
                 <button ng-show="usuario.profesor || usuario.jp" class="btn btn-success" type="submit"
                     ng-click="btnValidarPuntaje()">Publicar

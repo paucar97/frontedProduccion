@@ -5,6 +5,9 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     $rootScope.lstCursos = $cookies.getObject('cursos');
     $scope.curso = $cookies.getObject("cursoActual");
     $scope.actividad = $cookies.getObject("actividadActual");
+    $scope.mostrareditar=null;
+    console.dir($scope.actividad.flgEntregable);
+
     $scope.listaAl = [];
     $scope.listaGrupal = [];
     $scope.esActIndividual = false;
@@ -108,8 +111,44 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
         $scope.flgCalificado = false;
         $scope.editar = true;
     }
+
+    $scope.PuedeEditar = function () {
+        console.dir($scope.flgCalificado);
+        console.dir($scope.flgEsProfe);
+        console.dir($scope.flgMasUnProfe);
+        if($scope.flgCalificado==1){
+            if($scope.flgEsProfe==1){
+                //es profe
+                if($scope.flgMasUnProfe==1){
+                    console.dir("entro 1");
+                    if($scope.idCalificadorEsProfe && 
+                        ($scope.usuario.idUser != $scope.idCalificador)){
+                        $scope.mostrareditar=false;
+
+                    }else{
+                        console.dir("semuestra editar");
+                        $scope.mostrareditar=true;
+                    }
+                }else{
+                    $scope.mostrareditar=true;
+                    console.dir("entroooooooooo");
+                }
+            }else{
+                //es jp
+                if($scope.usuario.idUser != $scope.idCalificador){
+                    $scope.mostrareditar=false;
+                }else{
+                    $scope.mostrareditar=true;
+                }
+            }
+        }else{
+            $scope.mostrareditar=false;
+        }
+        
+    }
     //sacar de frende de lista aspectos
     $scope.ObtenerNotas = function () {
+        
         if ($scope.actividad.tipo == "I") {
             if ($scope.usuario.alumno == 1) {
                 $scope.idalumno = $scope.usuario.idUser;
@@ -169,7 +208,10 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                     serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno', params).then(function (res) {
                         $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                         $scope.notaFinal = res.data.calificacion.nota;
-
+                        $scope.flgEsProfe = res.data.flgEsProfe;
+                        $scope.flgMasUnProfe =res.data.flgMasUnoProfe;
+                        $scope.idCalificadorEsProfe =res.data.flgIdCalificadorEsProfe;
+                        $scope.idCalificador =res.data.idCalificador;
                         $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
                         $scope.falta = res.data.calificacion.flgFalta == 1;
                         for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
@@ -177,6 +219,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                                 $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
                             }
                         }
+                        $scope.PuedeEditar();
                     })
                 }
             }
@@ -229,13 +272,20 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                     console.dir(res.data);
                     $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                     $scope.notaFinal = res.data.calificacion.nota;
-                    $scope.flgCalificado = res.data.flgCalificado;
+                    $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
+                    $scope.flgEsProfe = res.data.flgEsProfe;
+                    $scope.flgMasUnProfe =res.data.flgMasUnoProfe;
+                    $scope.idCalificadorEsProfe =res.data.flgIdCalificadorEsProfe;
+                    $scope.idCalificador =res.data.idCalificador;
                     $scope.falta = res.data.calificacion.flgFalta == 1;
                     for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
                         if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) {
                             $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
                         }
                     }
+                    console.dir(res.data);
+                    $scope.PuedeEditar();
+                    
                 })
             }
         }
@@ -674,9 +724,19 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
             tipo: 4,
         }
         serviceCRUD.TypePost('actividad/obtener_rubrica', params).then(function (res) {
-            $scope.rubrica.listaNotaAspectos = res.data.listaAspectos;
-            $scope.idRub = res.data.idRubrica;
-            $scope.rubrica.nombreRubrica = res.data.nombreRubrica
+            if (res.data.succeed == false) {
+                Swal.fire({
+                    title: 'Aviso!',
+                    text: 'No existe una Rubria de Evaluacion',
+                    type: 'warning',
+                    confirmButtonText: 'Ok'
+                })
+                $scope.rubrica = null;
+            } else {
+                $scope.rubrica.listaNotaAspectos = res.data.listaAspectos;
+                $scope.idRub = res.data.idRubrica;
+                $scope.rubrica.nombreRubrica = res.data.nombreRubrica
+            }
         })
     }
 
@@ -727,6 +787,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
         ObtenerRubrica();
         if ($scope.usuario.alumno && $scope.actividad.flgMulticalificable == 0) {
             $scope.ObtenerNotas();
+            //$scope.PuedeEditar();
             if ($scope.actividad.tipo == 'I') mostrarEntregables($scope.usuario.idUser);
             else mostrarEntGrupo();
         }
