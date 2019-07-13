@@ -203,8 +203,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno', params).then(function (res) {
                     $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                     $scope.notaFinal = res.data.calificacion.nota;
-                    console.dir($scope.rubrica.listaNotaAspectos);
-                    
+                    //console.dir($scope.rubrica.listaNotaAspectos);
                     $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
                     $scope.flgEsProfe = res.data.flgEsProfe;
                     $scope.flgMasUnProfe =res.data.flgMasUnoProfe;
