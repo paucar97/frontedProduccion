@@ -16,12 +16,13 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     $scope.idRub = null;
     $scope.idalumno = 0;
     $scope.profe = $scope.usuario.profesor;
-    $scope.notaFinal = null;
+    $scope.notaFinal =0;
     $scope.flgCalificado = null;
     $scope.editar = null;
     $scope.auxNotaNivel = 0;
     $scope.nomRubrica = "";
-    $scope.getColor="";
+    $scope.getColor = "";
+    $scope.notaSugerida=0;
     $scope.rubrica = {
         flgRubricaEspecial: 0,
         idUsuarioCreador: $scope.usuario.idUser,
@@ -70,7 +71,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 tipo: 4,
                 idCalificador: $scope.usuario.idUser
             }
-            serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno', params).then(function (res) {                
+            serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno', params).then(function (res) {
                 $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                 $scope.notaFinal = res.data.calificacion.nota;
                 $scope.Calificado = res.data.flgCalificado;
@@ -92,7 +93,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 idJp: $scope.usuario.idUser,
                 idRubrica: $scope.idRub,
             }
-            serviceCRUD.TypePost('actividad/alumnos/obtener_nota_grupo', params).then(function (res) {                
+            serviceCRUD.TypePost('actividad/alumnos/obtener_nota_grupo', params).then(function (res) {
                 $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                 $scope.notaFinal = res.data.calificacion.nota;
                 $scope.flgCalificado = res.data.flgCalificado;
@@ -163,7 +164,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                     idCalificador: $scope.usuario.idUser
                 }
                 serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno_publicada', params).then(function (res) {
-                    
+
                     if (res.data.succeed == false) {
                         Swal.fire({
                             title: 'Error!',
@@ -202,6 +203,8 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno', params).then(function (res) {
                     $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                     $scope.notaFinal = res.data.calificacion.nota;
+                    console.dir($scope.rubrica.listaNotaAspectos);
+                    
                     $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
                     $scope.flgEsProfe = res.data.flgEsProfe;
                     $scope.flgMasUnProfe =res.data.flgMasUnoProfe;
@@ -233,7 +236,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                     idCalificador: $scope.usuario.idUser
                 }
                 serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno_publicada', params).then(function (res) {
-                    
+                    console.dir(res.data);
                     if (res.data.succeed == false) {
                         Swal.fire({
                             title: 'Error!',
@@ -243,7 +246,6 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                         })
                         $scope.rubrica = null;
                     } else {
-
                         $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                         $scope.notaFinal = res.data.calificacion.nota;
                         $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
@@ -255,7 +257,6 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                         }
                     }
                 })
-
             } else {
                 $scope.editar = false;
                 mostrarEntregables($scope.idgrupo);
@@ -265,7 +266,8 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                     idJp: $scope.usuario.idUser,
                     idRubrica: $scope.idRub,
                 }
-                serviceCRUD.TypePost('actividad/alumnos/obtener_nota_grupo', params).then(function (res) {                    
+                serviceCRUD.TypePost('actividad/alumnos/obtener_nota_grupo', params).then(function (res) {
+                    console.dir(res.data);
                     $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                     $scope.notaFinal = res.data.calificacion.nota;
                     $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
@@ -284,7 +286,6 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                     
                 })
             }
-
         }
     }
 
@@ -298,6 +299,13 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     }
 
     $scope.btnGuardarPuntaje = function () {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false,
+        })
         for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
             if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion != 3) {
                 if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 1) {
@@ -310,21 +318,29 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                                 })
                                 return;
                             }
+                            //if($scope.rubrica.listaNotaAspectos[i])
                         }
 
                     }
                 }
             }
         }
+
+        for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++){
+            if($scope.rubrica.listaNotaAspectos[i].nota>$scope.rubrica.listaNotaAspectos[i].puntajeMax){
+                swalWithBootstrapButtons.fire({
+                    title:'¡Eror!',
+                    text:'No se pueden ingresar puntajes mayores a los máximos establecidos.',
+                    type:'error',
+                    
+                })
+                return;
+            }
+        }
+
         if ($scope.falta == false) {
             if (formCal.checkValidity()) {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger'
-                    },
-                    buttonsStyling: false,
-                })
+                
 
                 swalWithBootstrapButtons.fire({
                     title: 'Está seguro que quiere calificar al alumno con la nota "' + $scope.notaFinal + '" ?',
@@ -593,6 +609,23 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
 
         }
     }
+
+    $scope.sumarNotaFinal=function(){
+        $scope.notaSugerida=0;
+        for (let i=0;i<$scope.rubrica.listaNotaAspectos.length;i++){
+            
+            if($scope.rubrica.listaNotaAspectos[i].tipoClasificacion!=3){
+                if($scope.rubrica.listaNotaAspectos[i].nota!=null){
+                    $scope.notaSugerida+=parseInt($scope.rubrica.listaNotaAspectos[i].nota);
+           
+
+                }
+            }
+        }
+        return $scope.notaSugerida;
+    }
+
+
     $scope.btnSubir = function () {
         file = document.getElementById('file').files;
         var datos = new FormData();
@@ -682,7 +715,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
             idProfesor: $scope.usuario.idUser
         }
         serviceCRUD.TypePost('publicar-notas/obtener_revisiones_profesor', params).then(function (res) {
-            
+
         })
     }
 
@@ -709,404 +742,44 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     }
 
     $scope.btnValidarPuntaje = function () {
-        var params = {
-            idProfesor: $scope.usuario.idUser,
-            idActividad: $scope.actividad.idActividad
-        }
-        serviceCRUD.TypePost('publicar-notas/publicar_notas_directo_profesor', params).then(function (res) {
-            if (res.data.succeed == false) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: 'Ocurrió un error al validar los resultados',
-                })
-                return;
+        if ($scope.usuario.profesor == 1) {
+            var params = {
+                idProfesor: $scope.usuario.idUser,
+                idActividad: $scope.actividad.idActividad
             }
-            Swal.fire({
-                type: 'success',
-                title: 'Se validaron los resultados correctamente',
-            })
-        })
-    }
-
-
-    $scope.btnCalificarComoJP = function () {
-        for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-            if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion != 3) {
-                if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 1) {
-                    for (let j = 0; j < $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador.length; j++) {
-                        for (let k = 0; k < $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].listaNiveles.length; k++) {
-                            if ($scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].listaNiveles[k].puntaje == null || $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].listaNiveles[k].puntaje == NaN) {
-                                Toast.fire({
-                                    type: 'error',
-                                    title: 'Falta registrar la nota de un nivel'
-                                })
-                                return;
-                            }
-                        }
-
-                    }
+            serviceCRUD.TypePost('publicar-notas/publicar_notas_directo_profesor', params).then(function (res) {
+                if (res.data.succeed == false) {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Ocurrió un error al validar los resultados',
+                    })
+                    return;
                 }
-            }
-        }
-        if ($scope.falta == false) {
-            if (formCal.checkValidity()) {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger'
-                    },
-                    buttonsStyling: false,
-                })
-
-                swalWithBootstrapButtons.fire({
-                    title: 'Está seguro que quiere calificar al alumno con la nota "' + $scope.notaFinal + '" ?',
-                    text: "Si debe cambiar algo, cancele",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Si, continuar',
-                    cancelButtonText: 'No, cancelar',
-
-                }).then((result) => {
-                    if (result.value) {
-                        swalWithBootstrapButtons.fire(
-                            'Listo!',
-                            'Se calificó correctamente.',
-                            'success'
-                        )
-                        
-                        for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                            if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion != 3) {
-                                $scope.rubrica.listaNotaAspectos[i].nota = parseInt($scope.rubrica.listaNotaAspectos[i].nota);
-                                if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 1) {
-                                    $scope.rubrica.listaNotaAspectos[i].nota = 0;
-                                    for (let j = 0; j < $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador.length; j++) {
-                                        $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota + $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].nota;
-                                        for (let k = 0; k < $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].listaNiveles.length; k++) {
-                                            $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].listaNiveles[k].puntaje = parseInt($scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].listaNiveles[k].puntaje);
-                                        }
-                                    }
-                                }
-                            }
-                            else {
-                                $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota ? 1 : 0;
-                            }
-                        }
-
-                        if ($scope.editar == false) {
-                            if ($scope.actividad.tipo == "I") {
-                                var params = {
-                                    idActividad: $scope.actividad.idActividad,
-                                    idAlumno: $scope.idalumno,
-                                    idJp: $scope.usuario.idUser,
-                                    nota: parseInt($scope.notaFinal),
-                                    flgFalta: $scope.falta ? 1 : 0,
-                                    idRubrica: $scope.idRub,
-                                    listaNotaAspectos: $scope.rubrica.listaNotaAspectos,
-                                    flgCompleto: 1,
-                                }
-                                
-                                serviceCRUD.TypePost('actividad/alumnos/calificar', params).then(function (res) {
-                                    for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                                        if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
-                                    }
-                                    $scope.ObtenerNotas();
-                                    //Si soy JP, debo llamar al servicio de enviar calificacion para ser aprobada por profesor
-                                    var paramsAprobacion = {
-                                        idActividad: $scope.actividad.idActividad,
-                                        idJpReviso: $scope.usuario.idUser
-                                    }
-                                    serviceCRUD.TypePost('publicar-notas/jp_solicitud_publicar', paramsAprobacion).then(function (res) {
-                                        
-                                    })
-                                })
-
-                            }
-                            else {
-                                //es actividad grupal
-                                var params = {
-                                    idActividad: $scope.actividad.idActividad,
-                                    idGrupo: $scope.idgrupo,
-                                    idJp: $scope.usuario.idUser,
-                                    nota: parseInt($scope.notaFinal),
-                                    flgFalta: $scope.falta ? 1 : 0,
-                                    idRubrica: $scope.idRub,
-                                    listaNotaAspectos: $scope.rubrica.listaNotaAspectos,
-                                    flgCompleto: 1,
-                                }
-                                serviceCRUD.TypePost('actividad/alumnos/calificar_grupo', params).then(function (res) {
-                                    for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                                        if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
-                                    }
-                                    $scope.ObtenerNotas();
-
-                                    //Si soy JP, debo llamar al servicio de enviar calificacion para ser aprobada por profesor
-                                    var paramsAprobacion = {
-                                        idActividad: $scope.actividad.idActividad,
-                                        idJpReviso: $scope.usuario.idUser
-                                    }
-                                    serviceCRUD.TypePost('publicar-notas/jp_solicitud_publicar', paramsAprobacion).then(function (res) {
-                                        
-                                    })
-                                })
-
-                            }
-                        } else {
-                            if ($scope.actividad.tipo == "I") {
-                                var params = {
-                                    idActividad: $scope.actividad.idActividad,
-                                    idAlumno: $scope.idalumno,
-                                    idJpN: $scope.usuario.idUser,
-                                    idJpAnt: $scope.usuario.idUser,
-                                    nota: parseInt($scope.notaFinal),
-                                    flgFalta: $scope.falta ? 1 : 0,
-                                    idRubrica: $scope.idRub,
-                                    listaNotaAspectos: $scope.rubrica.listaNotaAspectos,
-                                    flgCompleto: 1,
-                                }
-                                
-                                serviceCRUD.TypePost('actividad/alumnos/editar_nota', params).then(function (res) {
-                                    for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                                        if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
-                                    }
-                                    $scope.ObtenerNotas();
-                                    //Si soy JP, debo llamar al servicio de enviar calificacion para ser aprobada por profesor
-                                    var paramsAprobacion = {
-                                        idActividad: $scope.actividad.idActividad,
-                                        idJpReviso: $scope.usuario.idUser
-                                    }
-                                   
-                                    serviceCRUD.TypePost('publicar-notas/jp_solicitud_publicar', paramsAprobacion).then(function (res) {
-                                        
-                                    })
-                                })
-
-                            }
-                            else {
-                                var params = {
-                                    idActividad: $scope.actividad.idActividad,
-                                    idGrupo: $scope.idgrupo,
-                                    idJpAnt: $scope.usuario.idUser,
-                                    idJpN: $scope.usuario.idUser,
-                                    nota: parseInt($scope.notaFinal),
-                                    idRubrica: $scope.idRub,
-                                    flgFalta: $scope.falta ? 1 : 0,
-                                    listaNotaAspectos: $scope.rubrica.listaNotaAspectos,
-                                    flgCompleto: 1,
-                                }
-                                
-                                serviceCRUD.TypePost('actividad/alumnos/editar_nota_grupo', params).then(function (res) {
-                                    for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                                        if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
-                                    }
-                                    $scope.ObtenerNotas();
-                                    //Si soy JP, debo llamar al servicio de enviar calificacion para ser aprobada por profesor
-                                    var paramsAprobacion = {
-                                        idActividad: $scope.actividad.idActividad,
-                                        idJpReviso: $scope.usuario.idUser
-                                    }
-                                    
-                                    serviceCRUD.TypePost('publicar-notas/jp_solicitud_publicar', paramsAprobacion).then(function (res) {
-                                        
-                                    })
-                                })
-
-                            }
-
-
-                        }
-                    } else if (
-                        result.dismiss === Swal.DismissReason.cancel
-                    ) {
-                        swalWithBootstrapButtons.fire(
-                            'Se canceló la calificación',
-
-                        )
-                    }
-                })
-
-            }
-            else {
                 Swal.fire({
-                    title: 'Error!',
-                    text: 'Debe llenar todos los puntajes',
-                    type: 'error',
-                    confirmButtonText: 'Ok'
+                    type: 'success',
+                    title: 'Se validaron los resultados correctamente',
                 })
+            })
+        } else if ($scope.usuario.jp == 1) {
+            var params = {
+                idActividad: $scope.actividad.idActividad,
+                idJpReviso: $scope.usuario.idUser
             }
-
-        } else {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-                buttonsStyling: false,
-            })
-
-            swalWithBootstrapButtons.fire({
-                title: 'Se asignará una falta al alumno en cuestión',
-                text: "Si debe cambiar algo, cancele",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Si, continuar',
-                cancelButtonText: 'No, cancelar',
-
-            }).then((result) => {
-                if (result.value) {
-                    swalWithBootstrapButtons.fire(
-                        'Listo!',
-                        'Se calificó correctamente.',
-                        'success'
-                    )
-                    
-                    for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                        if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion != 3) {
-                            $scope.rubrica.listaNotaAspectos[i].nota = parseInt($scope.rubrica.listaNotaAspectos[i].nota);
-                            if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 1) {
-                                $scope.rubrica.listaNotaAspectos[i].nota = 0;
-                                for (let j = 0; j < $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador.length; j++) {
-                                    $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota + $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].nota;
-                                    for (let k = 0; k < $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].listaNiveles.length; k++) {
-                                        $scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].listaNiveles[k].puntaje = parseInt($scope.rubrica.listaNotaAspectos[i].listaNotaIndicador[j].listaNiveles[k].puntaje);
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                            $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota ? 1 : 0;
-                        }
-                    }
-
-                    if ($scope.editar == false) {
-                        if ($scope.actividad.tipo == "I") {
-                            var params = {
-                                idActividad: $scope.actividad.idActividad,
-                                idAlumno: $scope.idalumno,
-                                idJp: $scope.usuario.idUser,
-                                nota: parseInt($scope.notaFinal),
-                                flgFalta: $scope.falta ? 1 : 0,
-                                idRubrica: $scope.idRub,
-                                listaNotaAspectos: $scope.rubrica.listaNotaAspectos,
-                                flgCompleto: 1,
-                            }
-                            
-                            serviceCRUD.TypePost('actividad/alumnos/calificar', params).then(function (res) {
-                                for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                                    if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
-                                }
-                                $scope.ObtenerNotas();
-                                //Si soy JP, debo llamar al servicio de enviar calificacion para ser aprobada por profesor
-                                var paramsAprobacion = {
-                                    idActividad: $scope.actividad.idActividad,
-                                    idJpReviso: $scope.usuario.idUser
-                                }
-                                
-                                serviceCRUD.TypePost('publicar-notas/jp_solicitud_publicar', paramsAprobacion).then(function (res) {
-                                   
-                                })
-                            })
-                        }
-                        else {
-                            //es actividad grupal
-                            var params = {
-                                idActividad: $scope.actividad.idActividad,
-                                idGrupo: $scope.idgrupo,
-                                idJp: $scope.usuario.idUser,
-                                nota: parseInt($scope.notaFinal),
-                                flgFalta: $scope.falta ? 1 : 0,
-                                idRubrica: $scope.idRub,
-                                listaNotaAspectos: $scope.rubrica.listaNotaAspectos,
-                                flgCompleto: 1,
-                            }
-                            serviceCRUD.TypePost('actividad/alumnos/calificar_grupo', params).then(function (res) {
-                                for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                                    if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
-                                }
-                                $scope.ObtenerNotas();
-                                //Si soy JP, debo llamar al servicio de enviar calificacion para ser aprobada por profesor
-                                var paramsAprobacion = {
-                                    idActividad: $scope.actividad.idActividad,
-                                    idJpReviso: $scope.usuario.idUser
-                                }
-                                
-                                serviceCRUD.TypePost('publicar-notas/jp_solicitud_publicar', paramsAprobacion).then(function (res) {
-                                    
-                                })
-                            })
-                        }
-                    } else {
-                        if ($scope.actividad.tipo == "I") {
-                            var params = {
-                                idActividad: $scope.actividad.idActividad,
-                                idAlumno: $scope.idalumno,
-                                idJpN: $scope.usuario.idUser,
-                                idJpAnt: $scope.usuario.idUser,
-                                nota: parseInt($scope.notaFinal),
-                                flgFalta: $scope.falta ? 1 : 0,
-                                idRubrica: $scope.idRub,
-                                listaNotaAspectos: $scope.rubrica.listaNotaAspectos,
-                                flgCompleto: 1,
-                            }
-                            
-                            serviceCRUD.TypePost('actividad/alumnos/editar_nota', params).then(function (res) {
-                                for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                                    if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
-                                }
-                                $scope.ObtenerNotas();
-                                //Si soy JP, debo llamar al servicio de enviar calificacion para ser aprobada por profesor
-                                var paramsAprobacion = {
-                                    idActividad: $scope.actividad.idActividad,
-                                    idJpReviso: $scope.usuario.idUser
-                                }
-                                
-                                serviceCRUD.TypePost('publicar-notas/jp_solicitud_publicar', paramsAprobacion).then(function (res) {
-                                    
-                                })
-                            })
-                        }
-                        else {
-                            var params = {
-                                idActividad: $scope.actividad.idActividad,
-                                idGrupo: $scope.idgrupo,
-                                idJpAnt: $scope.usuario.idUser,
-                                idJpN: $scope.usuario.idUser,
-                                nota: parseInt($scope.notaFinal),
-                                idRubrica: $scope.idRub,
-                                flgFalta: $scope.falta ? 1 : 0,
-                                listaNotaAspectos: $scope.rubrica.listaNotaAspectos,
-                                flgCompleto: 1,
-                            }
-                            
-                            serviceCRUD.TypePost('actividad/alumnos/editar_nota_grupo', params).then(function (res) {
-                                for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                                    if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
-                                }
-                                $scope.ObtenerNotas();
-                                //Si soy JP, debo llamar al servicio de enviar calificacion para ser aprobada por profesor
-                                var paramsAprobacion = {
-                                    idActividad: $scope.actividad.idActividad,
-                                    idJpReviso: $scope.usuario.idUser
-                                }
-                                
-                                serviceCRUD.TypePost('publicar-notas/jp_solicitud_publicar', paramsAprobacion).then(function (res) {
-                                    
-                                })
-                            })
-                        }
-
-
-                    }
-                } else if (
-                    result.dismiss === Swal.DismissReason.cancel
-                ) {
-                    swalWithBootstrapButtons.fire(
-                        'Se canceló la calificación',
-
-                    )
+            serviceCRUD.TypePost('publicar-notas/jp_solicitud_publicar', params).then(function (res) {
+                if (res.data.succeed == false) {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Ocurrió un error al validar los resultados',
+                    })
+                    return;
                 }
+                Swal.fire({
+                    type: 'success',
+                    title: 'Se validaron los resultados correctamente',
+                })
             })
-
         }
     }
 

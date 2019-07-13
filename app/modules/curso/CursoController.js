@@ -5,7 +5,16 @@ app.controller('CursoController', function ($rootScope, $scope, $location, $cook
 
     $rootScope.lstCursos = $cookies.getObject('cursos');
     $scope.curso = $cookies.getObject('cursoActual');
-    $scope.esProfesor = $scope.usuario.profesor;
+
+    $scope.usuario.profesor = $scope.curso.permiso == 1;
+    $scope.usuario.alumno = $scope.curso.permiso == 2;
+    $scope.usuario.jp = $scope.curso.permiso == 3;
+
+    console.dir($scope.usuario);
+
+    $cookies.remove('usuario');
+    $cookies.putObject('usuario', $scope.usuario);
+
     $scope.nuevo = true; // true->crear false->editar
     $scope.hoy = serviceUtil.yyyymmdd(new Date());
     $scope.busy = false;

@@ -214,15 +214,15 @@
                       <div class="form-row">
                         <div class="form-group col-md-3 col-lg-2">
                           <label class="negrita">Nombre del Aspecto</label>
-                          <input disabled type="text" required maxlength="25" class="form-control"
-                            ng-model="asp.descripcion" />
+                          <textarea style="resize: none" disabled type="text" required maxlength="100" class="form-control"
+                            ng-model="asp.descripcion" ></textarea>
                           <div class="invalid-feedback">
                             Ingrese un nombre.
                           </div>
                         </div>
                         <div class="form-group col-md-5 col-lg-4">
                           <label class="negrita">Descripción</label>
-                          <input disabled maxlength="50" class="form-control" ng-model="asp.informacion" />
+                          <textarea style="resize: none" disabled maxlength="200" class="form-control" ng-model="asp.informacion" ></textarea>
                         </div>
                         <div class="form-group col-md-1">
                           <label class="negrita">Puntaje</label>
@@ -235,7 +235,7 @@
                         </div>
                         <div class="form-group col-md-4">
                           <label class="negrita">Puntaje Asignado</label>
-                          <input ng-disabled="coTieneNota" ng-model="asp.nota" required type="text"
+                          <input disabled ng-model="asp.nota" required type="text"
                             onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 45"
                             maxlength="2" style="width: 70px" class="form-control" />
                           <div class="invalid-feedback">
@@ -248,53 +248,20 @@
                         <div class="form-row">
                           <div class="form-group col-md-3 col-lg-2">
                             <label class="negrita">Nombre del indicador</label>
-                            <input disabled maxlength="25" class="form-control" ng-model="indi.descripcion" />
+                            <input disabled maxlength="100" class="form-control" ng-model="indi.descripcion" />
                             <div class="invalid-feedback">
                               Ingrese un nombre.
                             </div>
                           </div>
                           <div class="form-group col-md-5 col-lg-4">
                             <label class="negrita">Descripción</label>
-                            <input disabled maxlength="50" class="form-control" ng-model="indi.informacion" />
+                            <input disabled maxlength="200" class="form-control" ng-model="indi.informacion" />
                           </div>
-                          <div class="form-group col-md-4">
-                            <label class="negrita">Puntaje Asignado</label>
-                            <input ng-disabled="coTieneNota" ng-model="indi.nota" required type="text"
-                              onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 45"
-                              maxlength="2" style="width: 70px" class="form-control" />
-                            <div class="invalid-feedback">
-                              Ingrese un puntaje.
-                            </div>
-                          </div>
+                          
 
                         </div>
-                        <div ng-repeat="nvl in indi.listaNiveles" style="padding-left: 4%">
-                          <div class="form-row">
-                            <div class="form-group col-md-3 col-lg-2">
-                              <label class="negrita">Nombre del indicador</label>
-                              <input disabled required maxlength="25" class="form-control"
-                                ng-model="indicador.descripcion" />
-                              <div class="invalid-feedback">
-                                Ingrese un nombre.
-                              </div>
-                            </div>
-                            <div class="form-group col-md-5 col-lg-4">
-                              <label class="negrita">Descripción</label>
-                              <textarea disabled ng-model="nvl.descripcion" maxlength="200"
-                                class="form-control"></textarea>
-                            </div>
-                            <div class="form-group col-md-1">
-                              <label class="negrita">Puntaje</label>
-                              <input disabled type="text"
-                                onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 45"
-                                maxlength="2" class="form-control" style="width: 70px" ng-model="nvl.puntaje" />
-                              <div class="invalid-feedback">
-                                Ingrese un puntaje.
-                              </div>
-                            </div>
-
-                          </div>
-                          <div ng-repeat="nivel in indicador.listaNiveles" style="padding-left: 4%">
+                        
+                          <div ng-repeat="nivel in indi.listaNiveles" style="padding-left: 4%">
                             <div class="form-row">
                               <div class="form-group col-md-1">
                                 <label class="negrita">{{'Nivel ' + ($index + 1)}}</label>
@@ -304,7 +271,7 @@
                               </div>
                               <div class="form-group col-md-4 col-lg-4">
                                 <label class="negrita">Descripción</label>
-                                <textarea disabled ng-model="nivel.descripcion" maxlength="200"
+                                <textarea style="resize: none" disabled ng-model="nivel.descripcion" maxlength="200"
                                   class="form-control"></textarea>
                               </div>
                               <div class="form-group col-md-1">
@@ -316,24 +283,36 @@
                                   Ingrese un puntaje.
                                 </div>
                               </div>
+                              <div class="col-1">
+                                  <div class="form-check ">
+                                      <label><br><br><br></label>
+                                      <input style="height: 25px;width: 25px" ng-disabled="coTieneNota"
+                                          ng-click="elegirNivel(nivel,indi,asp)"
+                                          class="form-check-input position-static" type="radio"
+                                          name="{{indi}}" value="option1" aria-label="...">
+                                  </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        
                       </div>
                     </div>
                     <div ng-if="asp.tipoClasificacion == 2">
                       <div class="form-row">
-                        <div class="form-group col-md-3 col-lg-2">
+                        <div class="col-2">
                           <label class="negrita">Nombre del Aspecto</label>
-                          <input disabled required maxlength="25" class="form-control" ng-model="asp.descripcion" />
+                          <textarea disabled required maxlength="100" class="form-control" ng-model="asp.descripcion" style="resize: none"></textarea>
                           <div class="invalid-feedback">
                             Ingrese un nombre.
                           </div>
-                          <div class="form-group col-md-5 col-lg-4">
+
+                        </div>
+
+                          <div class="form-group col-5">
                             <label class="negrita">Descripción</label>
-                            <input disabled maxlength="50" class="form-control" ng-model="asp.informacion" />
+                            <textarea disabled maxlength="200" class="form-control" ng-model="asp.informacion" style="resize: none"></textarea>
                           </div>
-                          <div class="form-group col-md-1">
+                          <div class="form-group col-1">
                             <label class="negrita">Puntaje</label>
                             <input disabled required type="text"
                               onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 45"
@@ -342,7 +321,7 @@
                               Ingrese un puntaje.
                             </div>
                           </div>
-                          <div class="form-group col-md-4">
+                          <div class="form-group col-2">
                             <label class="negrita">Puntaje Asignado</label>
                             <input ng-disabled="coTieneNota" ng-model="asp.nota" required type="text"
                               onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 45"
@@ -351,31 +330,32 @@
                               Ingrese un puntaje.
                             </div>
                           </div>
-                        </div>
-                      </div>
-                      <div ng-if="asp.tipoClasificacion == 3">
-                        <div class="form-row">
-                          <div class="form-group col-md-3 col-lg-2">
-                            <label class="negrita">Nombre del Aspecto</label>
-                            <input disabled type="text" required maxlength="25" class="form-control"
-                              ng-model="asp.descripcion" />
-                            <div class="invalid-feedback">
-                              Ingrese un nombre
-                            </div>
-                          </div>
-                          <div class="form-group col-md-5 col-lg-4">
-                            <label class="negrita">Descripción</label>
-                            <input disabled type="text" maxlength="50" class="form-control"
-                              ng-model="asp.informacion" />
-                          </div>
-                          <div class="form-group col-md-5 col-lg-4">
-                            <label style="font-weight: bold">Marque si considera correcto</label><br>
-                            <input ng-disabled="flgCalificado" ng-model="falta" ng-click="marcado()" type="checkbox">
-                          </div>
-
-                        </div>
+                        
                       </div>
                     </div>
+                        <div ng-if="asp.tipoClasificacion == 3">
+                          <div class="form-row">
+                            <div class="form-group col-md-3 col-lg-2">
+                              <label class="negrita">Nombre del Aspecto</label>
+                              <textarea style="resize: none" disabled type="text" required maxlength="100" class="form-control"
+                                ng-model="asp.descripcion"></textarea>
+                              <div class="invalid-feedback">
+                                Ingrese un nombre
+                              </div>
+                            </div>
+                            <div class="form-group col-md-5 col-lg-4">
+                              <label class="negrita">Descripción</label>
+                              <textarea disabled type="text" maxlength="200" class="form-control"
+                                ng-model="asp.informacion" style="resize: none"></textarea>
+                            </div>
+                            <div class="form-group col-md-5 col-lg-4">
+                              <label style="font-weight: bold">Marque si considera correcto</label><br>
+                              <input ng-disabled="flgCalificado" ng-value="aspecto.nota"  type="checkbox">
+                            </div>
+  
+                          </div>
+                        </div>
+
                   </div>
                 </div>
               </div>
