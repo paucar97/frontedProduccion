@@ -144,6 +144,13 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
 
             serviceCRUD.TypePost('coevaluacion/obtener_coevaluacion', params).then(function (res) {
                 $scope.rubricaCoauto = res.data;
+                console.dir($scope.rubricaCoauto);
+                for (let i = 0; i < $scope.rubricaCoauto.listaNotaAspectos.length; i++) {
+                    if($scope.rubricaCoauto.listaNotaAspectos[i].tipoClasificacion==3){
+                        $scope.rubricaCoauto.listaNotaAspectos[i].nota = $scope.rubricaCoauto.listaNotaAspectos[i].nota==1? true : false;
+                    }
+                  
+                }
                 if (res.data.nota == null) {
                     $scope.coTieneNota = false;
                 } else {
@@ -182,6 +189,14 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
                         'Se calificó a tu compañero.',
                         'success'
                     )
+                    for (let i = 0; i < $scope.rubricaCoauto.listaNotaAspectos.length; i++) {
+                        if($scope.rubricaCoauto.listaNotaAspectos[i].tipoClasificacion==3){
+                            $scope.rubricaCoauto.listaNotaAspectos[i].nota = $scope.rubricaCoauto.listaNotaAspectos[i].nota ? 1 : 0;
+                            console.dir("GA");
+                            console.dir($scope.rubricaCoauto.listaNotaAspectos[i].nota);
+                        }
+                      
+                    }
                     let params = {
                         idActividad: $scope.actividad.idActividad,
                         idAlumno: $scope.idalumno,
@@ -193,10 +208,11 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
                         flgCompleto: 0,
                     }
 
-                    serviceCRUD.TypePost('coevaluacion/calificar_coevaluacion', params).then(function (res) {
+                     serviceCRUD.TypePost('coevaluacion/calificar_coevaluacion', params).then(function (res) {
 
-                    })
-                    $scope.coTieneNota = true;
+                        $scope.coTieneNota = true;
+                        $scope.obtenerCo();
+                    }) 
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === Swal.DismissReason.cancel

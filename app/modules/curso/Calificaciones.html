@@ -66,7 +66,7 @@
 
                 <button ng-show="flgCalificado && (usuario.profesor)" type="button" class="btn btn-warning"
                     ng-click="btnEditar()"><i class="fas fa-pen"></i>&nbsp;Editar</button>
-                <button ng-show="usuario.profesor || usuario.jp" class="btn btn-success" type="submit"
+                <button ng-show="usuario.profesor || (usuario.jp && actividad.flgConfianza==1)" class="btn btn-success" type="submit"
                     ng-click="btnValidarPuntaje()">Publicar
                     resultados</button>
             </div>
