@@ -17,6 +17,14 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
     $scope.flgCalificado = false;
     $scope.mostrarAspecto = true;
     $scope.flgCrear=false;
+    $scope.flgVer = false;
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
 
     //Como me encuentro en la actividad, el tipo es 1 y el idActividadUHorario es idActividad
     $scope.regEsfuerzo = {
@@ -94,9 +102,6 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
         }
 
         serviceCRUD.TypePost('actividad/obtener_rubrica', params).then(function (res) {
-
-
-
 
             if (res.data.succeed == false) {
                 Swal.fire({
@@ -236,26 +241,81 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
         }
     }
 
-
-    $scope.obtenerAuto = function () {
+    /**
+     *  $scope.obtenerAuto = function () {
         let params = {
             idActividad: $scope.actividad.idActividad,
             idAlumno: $scope.usuario.idUser,
         }
 
         serviceCRUD.TypePost('autoevaluacion/obtener_autoevaluacion', params).then(function (res) {
-            $scope.rubricaAuto = res.data;
-            if (res.data.nota == null) {
-                $scope.auTieneNota = false;
-                $scope.falta = false;
-                $scope.flgCalificado = false;
+            if (res.data.succeed == false) {
+                Swal.fire({
+                    title: 'Aviso!',
+                    text: 'No existe una autoevaluación',
+                    type: 'warning',
+                    confirmButtonText: 'Ok'
+                })
+                $scope.rubricaAuto = null;
             } else {
-                $scope.auTieneNota = true;
-                $scope.falta = true;
-                $scope.flgCalificado = true;
+                $scope.rubricaAuto = res.data;
+                if (res.data.nota == null) {
+                    $scope.auTieneNota = false;
+                    $scope.falta = false;
+                    $scope.flgCalificado = false;
+                } else {
+                    $scope.auTieneNota = true;
+                    $scope.falta = true;
+                    $scope.flgCalificado = true;
+                }
             }
-            //$scope.hayEncuesta=false;
         })
+    }
+     */
+   
+
+    $scope.obtenerAuto = function () {
+        let aux = {
+            idActividad: $scope.actividad.idActividad,
+            tipo: 2,
+        }
+
+        serviceCRUD.TypePost('actividad/obtener_rubrica', aux).then(function (res) {
+            if (res.data.succeed == false) {
+                Swal.fire({
+                    title: 'Aviso!',
+                    text: 'No existe una autoevaluación',
+                    type: 'warning',
+                    confirmButtonText: 'Ok'
+                })
+                $scope.rubricaAuto = null;
+            } else {
+                let params = {
+                    idActividad: $scope.actividad.idActividad,
+                    idAlumno: $scope.usuario.idUser,
+                }
+
+                serviceCRUD.TypePost('autoevaluacion/obtener_autoevaluacion', params).then(function (res) {
+                    if (res.data.succeed == false) {
+                        $scope.rubricaAuto = null;
+                    } else {
+                        $scope.rubricaAuto = res.data;
+                        if (res.data.nota == null) {
+                            $scope.auTieneNota = false;
+                            $scope.falta = false;
+                            $scope.flgCalificado = false;
+                        } else {
+                            $scope.auTieneNota = true;
+                            $scope.falta = true;
+                            $scope.flgCalificado = true;
+                        }
+                    }
+                })
+
+            }
+
+        })
+
     }
 
     $scope.btnGuardarAutoEvaluacion = function () {
@@ -319,15 +379,6 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
         }
     }
 
-    //Como profesor: Crear Registro Horas
-    $scope.btnCrearRegistroHoras = function () {
-        serviceCRUD.TypePost('registro_horas/crear_registro_horas', $scope.regEsfuerzo).then(function (res) {
-            Swal.fire({
-                type: 'success',
-                title: 'Se creó el registro de horas correctamente'
-            })
-        })
-    }
 
     //Como alumno: Registrar Horas
     $scope.btnRegistrarHoras = function () {
@@ -336,26 +387,11 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
                 type: 'success',
                 title: 'Se registraron las horas correctamente'
             })
+            $scope.obtenerRegHorasComoAlumno();
         })
     }
 
-    //Como profesor y alumno: Obtener registro horas x alumno
-    $scope.obtenerRegistroHorasXAlumno = function () {
-        var params = {
-            tipo: 1,
-            idActividadUHorario: $scope.actividad.idActividad,
-            //esto lo saco del select alumno
-            idAlumno: $scope.idalumno
-        }
-        serviceCRUD.TypePost('registro_horas/obtener_registro_horas_alumno', params).then(function (res) {
-            $scope.regEsfuerzoHoras.idRegistroEsfuerzo = res.data.idRegistroEsfuerzo;
-            $scope.regEsfuerzoHoras.tipo = res.data.tipo;
-            $scope.regEsfuerzoHoras.idAlumno = $scope.idalumno
-            $scope.regEsfuerzoHoras.listaCategorias = res.data.listaCategorias;
-            $scope.hayRegHorasActividad = true;
-        })
-    }
-
+    //Como alumno: Obtener mi registro de horas
     $scope.obtenerRegHorasComoAlumno = function () {
         var params = {
             tipo: 1,
@@ -366,61 +402,33 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
         serviceCRUD.TypePost('registro_horas/obtener_registro_horas_alumno', params).then(function (res) {
             if (res.data.succeed == false) {
                 $scope.flgCrear = false;
+                $scope.flgVer = false;
                 return;
             }
             else {
-                $scope.flgCrear = true;
+                console.dir(res.data)
                 $scope.regEsfuerzoHoras.idRegistroEsfuerzo = res.data.idRegistroEsfuerzo;
                 $scope.regEsfuerzoHoras.tipo = res.data.tipo;
                 $scope.regEsfuerzoHoras.idAlumno = $scope.usuario.idUser
                 $scope.regEsfuerzoHoras.listaCategorias = res.data.listaCategorias;
                 $scope.hayRegHorasActividad = true;
-            }
-            if($scope.regEsfuerzoHoras.listaCategorias[0].length==0){
-                $scope.flgCrear=false;
-            }
-        })
-    }
-
-    //Como profesor y alumno: Obtener registro horas (solo categorias)
-    function obtenerRegistroHorasSoloCategorias() {
-        var params = {
-            tipo: 1,
-            idActividadUHorario: $scope.actividad.idActividad
-        }
-        serviceCRUD.TypePost('registro_horas/obtener_registro_horas', params).then(function (res) {
-            if (res.data.succeed == false) {
-                $scope.flgCrear = false;
-                return;
-            }
-            else {
-                //Asigno el objeto registro horas categoria al registro horas con respuestas
-                $scope.flgCrear = true;
-
-                $scope.regEsfuerzoHoras.idRegistroEsfuerzo = res.data.idRegistroEsfuerzo;
-                $scope.regEsfuerzoHorasidAlumno = $scope.usuario.idUser;
-                $scope.regEsfuerzoHoras.listaCategorias = res.data.listaCategorias;
-                for (let i = 0; i < $scope.regEsfuerzoHoras.listaCategorias.length; i++) {
-                    $scope.regEsfuerzoHoras.listaCategorias[i].listaRespuestas = []
+                console.dir($scope.regEsfuerzoHoras.listaCategorias[0].listaRespuestas.length)
+                if($scope.regEsfuerzoHoras.listaCategorias[0].listaRespuestas.length > 0){
+                    $scope.flgCrear = false;
+                    $scope.flgVer = true;
                 }
-                $scope.hayRegCategoriasActividad = true;
+                else{
+                    $scope.flgCrear = true;
+                    $scope.flgVer = false;
+                }
+                
             }
-
+            console.dir('flgcrear = ' + $scope.flgCrear)
+            console.dir('flgeditar = ' + $scope.flgVer)
         })
+
     }
 
-    //Como profesor: Agregar una categoria
-    $scope.btnAgregarCategoria = function () {
-        $scope.regEsfuerzo.listaCategorias.push({
-            descripcion: ''
-        });
-    }
-
-    //Como profesor: Quitar una categoria
-    $scope.btnQuitarCategoria = function (categoria) {
-        var pos = $scope.regEsfuerzo.listaCategorias.indexOf(categoria)
-        $scope.regEsfuerzo.listaCategorias.splice(pos, 1)
-    }
 
     //Como alumno puedo agregar una respuesta a una categoria
     $scope.btnAgregarRespuesta = function (categoria) {
@@ -431,6 +439,9 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
             horasPlanificadas: null,
             horasReales: null
         })
+
+
+
     }
 
     //Como alumno: Quitar una respuesta de una categoria
@@ -461,11 +472,6 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
     }
 
     function init() {
-        if ($scope.esProfesor) {
-            ListarAlumnos();
-            obtenerRegistroHorasSoloCategorias();
-            $scope.obtenerRegistroHorasXAlumno();
-        }
         if (!$scope.esProfesor) {
             $scope.listarGrupo();
             $scope.obtenerRegHorasComoAlumno();

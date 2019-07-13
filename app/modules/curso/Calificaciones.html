@@ -7,9 +7,6 @@
         </ol>
     </nav>
     <br />
-
-
-
     <div class="row d-flex align-items-end">
         <div ng-show="esActIndividual && mostrar && !usuario.alumno && (usuario.profesor || usuario.jp)"
             class="form-group col-8">
@@ -35,11 +32,21 @@
             <button ng-show="(usuario.profesor || usuario.jp) && esActIndividual" class="btn btn-success"
                 ng-click="siguiente()"><i class="fas fa-arrow-circle-right"></i></button>
         </div>
+        <div ng-show="actividad.flgMulticalificable==1 && (usuario.profesor || usuario.alumno)"
+            class="form-group col-8">
+            <label style="font-weight: bold">Jefe de práctica</label>
+            <select ng-change="ObtenerNotasJP()" class="form-control custom-select" ng-model="idJp"
+                ng-init="idJp = '0'">
+                <option value="0">Seleccione</option>
+                <option ng-repeat="item in listaJps" ng-value="item.idCalificador">{{item.nombreCalificador}}
+                </option>
+            </select>
+        </div>
         <div ng-show="idalumno!='0' || idgrupo!='0' && !usuario.alumno" class="form-group col-md-2">
             <label style="font-weight: bold">No asistió</label>
             <input ng-disabled="flgCalificado" ng-model="falta" ng-click="marcado()" type="checkbox">
         </div>
-        <div class="col-md-12" ng-id="usuario.alumno">
+        <div class="col-md-12" ng-show="actividad.flgEntregable==1">
             <div>
                 <h5>Entregables</h5>
             </div>
@@ -48,7 +55,7 @@
                     ng-click="descargarArchivo(arch)">{{arch.urlEntregable == null ? arch.nombreArchivo : arch.urlEntregable}}</a>
             </div>
         </div>
-        <div class="form-group col-md-9 row" ng-if="usuario.alumno">
+        <div class="form-group col-md-9 row" ng-show="usuario.alumno && actividad.flgEntregable==1">
             <div class="col-md-4 form-group">
                 <label for="file">Elegir archivo(s)</label>
                 <input type="file" class="form-control-file" id="file" name="file" multiple>
@@ -63,8 +70,8 @@
         </div>
         <div ng-show="idalumno!='0' || idgrupo!='0'" class="form-group col-md-3">
             <div>
-
-                <button ng-show="flgCalificado && (usuario.profesor)" type="button" class="btn btn-warning"
+                <!-- PuedeEditar() ---- ng-show= "!usuario.alumno && flgCalificado"-->
+                <button ng-show= "mostrareditar" type="button" class="btn btn-warning" 
                     ng-click="btnEditar()"><i class="fas fa-pen"></i>&nbsp;Editar</button>
                 <button ng-show="usuario.profesor || (usuario.jp && actividad.flgConfianza==1)" class="btn btn-success" type="submit"
                     ng-click="btnValidarPuntaje()">Publicar
@@ -73,10 +80,9 @@
         </div>
     </div>
 
-    <div class="line"></div>
     <form id="formCal" name="formCal" class="needs-validation" novalidate>
-        <div ng-show="idalumno!='0' || idgrupo!='0' || usuario.alumno " class="card"
-            style="background-color: rgb(135, 177, 166)">
+        <div ng-show="(actividad.flgMulticalificable==0 && (idalumno!='0' || idgrupo!='0' || usuario.alumno)) || (actividad.flgMulticalificable==1 && idJp!='0')"
+            class="card" style="background-color: rgb(135, 177, 166)">
             <div class="card-body">
 
                 <div ng-repeat="aspecto in rubrica.listaNotaAspectos" style="width: 100%">
@@ -113,7 +119,8 @@
 
                                             <div class="form-check ">
                                                 <label><br><br><br></label>
-                                                <input style="height: 25px;width: 25px" ng-disabled="flgCalificado"
+                                                <input style="height: 25px;width: 25px"
+                                                    ng-disabled="flgCalificado==1 && actividad.flgMulticalificable==0"
                                                     ng-click="elegirNivel(nivel,indicador,aspecto)"
                                                     class="form-check-input position-static" type="radio"
                                                     name="{{indicador}}" value="option1" aria-label="...">
@@ -132,8 +139,6 @@
 
 
                         </div>
-
-
                         <div ng-if="aspecto.tipoClasificacion == 2" class="row">
                             <div class="form-group col-sm-3">
                                 <label style="color: rgb(5, 5, 5)"><b> Descripción </b></label>
@@ -147,8 +152,9 @@
                             <div class="form-group col-sm-2">
                                 <label style="color: rgb(5, 5, 5)"><b> Nota</b></label>
                                 <input onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                    ng-disabled="flgCalificado" class="form-control" type="text" style="width: 50px"
-                                    ng-model="aspecto.nota" maxlength="2" required>
+                                    ng-disabled="flgCalificado==1 && actividad.flgMulticalificable==0"
+                                    class="form-control" type="text" style="width: 50px" ng-model="aspecto.nota"
+                                    maxlength="2" required>
                             </div>
                             <div class="form-group col-sm-3">
                                 <label style="color: rgb(5, 5, 5)"><b> Comentarios</b></label>
@@ -157,8 +163,9 @@
                                         class="fas fa-plus"></i></button>
                                 <div>
                                     <textarea style="resize: none" ng-show="aspecto.puedeComentar || usuario.alumno"
-                                        ng-model="aspecto.comentario" ng-disabled="flgCalificado" class="form-control"
-                                        type="text"></textarea>
+                                        ng-model="aspecto.comentario"
+                                        ng-disabled="flgCalificado==1 && actividad.flgMulticalificable==0"
+                                        class="form-control" type="text"></textarea>
                                 </div>
 
                                 <!--<div class="form-group col-sm-2">
@@ -205,47 +212,46 @@
                                         class="fas fa-plus"></i></button>
                                 <div>
                                     <textarea style="resize: none" ng-show="aspecto.puedeComentar || usuario.alumno"
-                                        ng-model="aspecto.comentario" ng-disabled="flgCalificado" class="form-control"
-                                        type="text"></textarea>
+                                        ng-model="aspecto.comentario"
+                                        ng-disabled="flgCalificado==1 && actividad.flgMulticalificable==0"
+                                        class="form-control" type="text"></textarea>
                                 </div>
 
                             </div>
                         </div>
-                        <div class="form-row" style="margin-bottom: 1%">
-    
-                            <div class="col-4" ng-if="aspecto.tipoClasificacion==1">
-                                <label style="color: rgb(5, 5, 5)"><b> Nota aspecto</b></label>
-                                <input onkeypress="return event.charCode >= 48 && event.charCode <= 57" readonly type="text"
-                                    class="form-control" ng-model="aspecto.nota" style="width: 50px" required>
-    
-                            </div>
-    
-                            <div ng-show="!usuario.alumno" class="col-4" style="float: right"
-                                ng-if="aspecto.tipoClasificacion==1">
-                                <label style="color: rgb(5, 5, 5)"><b> Comentarios </b></label>
-                                <button style="display: block" ng-show="!aspecto.puedeComentar" type="button"
-                                    class="btn btn-warning" ng-click="btnAgregarComentario(aspecto)"><i
-                                        class="fas fa-plus"></i></button>
-    
-                                <textarea style="resize: none" ng-show="aspecto.puedeComentar" ng-model="aspecto.comentario"
-                                    ng-disabled="flgCalificado" class="form-control" type="text"></textarea>
-    
-                            </div>
-                        </div>
-                        <div class="line"></div>
                     </div>
+                    <div class="form-row" style="margin-left:1%; margin-bottom: 1%">
+                        <div class="col-4" ng-if="aspecto.tipoClasificacion==1">
+                            <label style="color: rgb(5, 5, 5)"><b> Nota aspecto</b></label>
+                            <input onkeypress="return event.charCode >= 48 && event.charCode <= 57" readonly type="text"
+                                class="form-control" ng-model="aspecto.nota" style="width: 50px" required>
+
+                        </div>
+                        <div ng-show="!usuario.alumno" class="col-4" style="float: right"
+                            ng-if="aspecto.tipoClasificacion==1">
+                            <label style="color: rgb(5, 5, 5)"><b> Comentarios </b></label>
+                            <button style="display: block" ng-show="!aspecto.puedeComentar" type="button"
+                                class="btn btn-warning" ng-click="btnAgregarComentario(aspecto)"><i
+                                    class="fas fa-plus"></i></button>
+
+                            <textarea style="resize: none" ng-show="aspecto.puedeComentar" ng-model="aspecto.comentario"
+                                ng-disabled="flgCalificado==1 && actividad.flgMulticalificable==0" class="form-control"
+                                type="text"></textarea>
+
+                        </div>
+                    </div>
+                    <div class="line"></div>
                 </div>
             </div>
         </div>
-
         <div class="line"></div>
 
-        <div ng-show="idalumno!='0' || idgrupo!='0' || usuario.alumno" class="row justify-content-between">
+        <div ng-show="(actividad.flgMulticalificable==0 && (idalumno!='0' || idgrupo!='0' || usuario.alumno)) || (actividad.flgMulticalificable==1 && idJp!='0')"
+            class="row justify-content-between">
             <div class="form-group col-2" style="margin-left: 1%">
                 <label style="font-weight: bold;font-size: 1.7em ;color: rgb(5, 5, 5)">Nota Sugerida</label>
                 <div style="padding-left: 25px">
-                    <input disabled
-                        class="form-control" style="width: 60px; height: 50px; font-size: 1.3em;"
+                    <input disabled class="form-control" style="width: 60px; height: 50px; font-size: 1.3em;"
                         ng-value="sumarNotaFinal()" maxlength="2" required>
                 </div>
             </div>
@@ -254,25 +260,27 @@
                 <div style="padding-left: 25px">
                     <input onkeypress="return event.charCode >= 48 && event.charCode <= 57" type="text"
                         class="form-control" style="width: 60px; height: 50px; font-size: 1.3em;"
-                        ng-disabled="flgCalificado" ng-model="notaFinal" maxlength="2" required>
+                        ng-disabled="flgCalificado==1 && actividad.flgMulticalificable==0" ng-model="notaFinal"
+                        maxlength="2" required>
                 </div>
             </div>
-            <div ng-show="usuario.profesor || usuario.jp" class="form-group col-sm-2 d-flex align-items-center">
-                <button class="btn btn-primary" type="submit" ng-show="!flgCalificado || edita"
-                    ng-click="btnGuardarPuntaje()">Guardar</button>
+            <div ng-show="(usuario.profesor || usuario.jp) && ((!flgCalificado || actividad.flgMulticalificable==1) || edita)"
+                class="form-group col-sm-2 d-flex align-items-center">
+                <button class="btn btn-primary" type="submit" ng-click="btnGuardarPuntaje()">Guardar</button>
             </div>
         </div>
-
     </form>
-    <!-- <div ng-show="usuario.jp" class="form-group col-sm-2">
+</div>
+
+<!-- <div ng-show="usuario.jp" class="form-group col-sm-2">
         <button class="btn btn-primary" type="submit" ng-show="!flgCalificado || edita"
             ng-click="btnCalificarComoJP()">Calificar</button>
     </div> -->
-    <script>
-        $(document).ready(function () {
-            bsCustomFileInput.init()
-        })
-    </script>
+<script>
+    $(document).ready(function () {
+        bsCustomFileInput.init()
+    })
+</script>
 </div>
 </div>
 <div class="modal fade modal-sm modal-dialog" id="mdCompletar" tabindex="-1" role="dialog" data-backdrop="static"
