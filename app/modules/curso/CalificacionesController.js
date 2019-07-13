@@ -19,6 +19,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     $scope.auxNotaNivel = 0;
     $scope.nomRubrica = "";
     $scope.getColor = "";
+    $scope.notaSugerida = 0;
     $scope.rubrica = {
         flgRubricaEspecial: 0,
         idUsuarioCreador: $scope.usuario.idUser,
@@ -250,6 +251,13 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     }
 
     $scope.btnGuardarPuntaje = function () {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false,
+        })
         for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
             if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion != 3) {
                 if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 1) {
@@ -262,21 +270,29 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                                 })
                                 return;
                             }
+                            //if($scope.rubrica.listaNotaAspectos[i])
                         }
 
                     }
                 }
             }
         }
+
+        for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
+            if ($scope.rubrica.listaNotaAspectos[i].nota > $scope.rubrica.listaNotaAspectos[i].puntajeMax) {
+                swalWithBootstrapButtons.fire({
+                    title: '¡Eror!',
+                    text: 'No se pueden ingresar puntajes mayores a los máximos establecidos.',
+                    type: 'error',
+
+                })
+                return;
+            }
+        }
+
         if ($scope.falta == false) {
             if (formCal.checkValidity()) {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger'
-                    },
-                    buttonsStyling: false,
-                })
+
 
                 swalWithBootstrapButtons.fire({
                     title: 'Está seguro que quiere calificar al alumno con la nota "' + $scope.notaFinal + '" ?',
@@ -546,16 +562,19 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
         }
     }
 
-    $scope.sumarNotaFinal = function (nota) {
-        if ($scope.notaFinal == null) {
-            $scope.notaFinal = 0;
+    $scope.sumarNotaFinal = function () {
+        $scope.notaSugerida = 0;
+        for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
+
+            if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion != 3) {
+                if ($scope.rubrica.listaNotaAspectos[i].nota != null) {
+                    $scope.notaSugerida += parseInt($scope.rubrica.listaNotaAspectos[i].nota);
+                }
+            }
         }
-        $scope.notFinal += parseInt(nota);
+        return $scope.notaSugerida;
     }
 
-    $scope.mostrarnotaFinal = function () {
-        $scope.notaFinal = $scope.notFinal;
-    }
 
     $scope.btnSubir = function () {
         file = document.getElementById('file').files;

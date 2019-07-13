@@ -93,8 +93,9 @@ app.controller('VerEncuestasController', function ($rootScope, $scope, $location
         serviceCRUD.TypePost('coevaluacion/obtener_notas_grupos', params).then(function (res) {
 
             $scope.coEval = res.data.listaNotas;
-            $scope.lstAspectos = res.data.listaNotas[0].nombreAspectos;
+            $scope.lstAspectos = res.data.listaAspectos;
 
+            console.dir(res.data);
         })
     }
 
