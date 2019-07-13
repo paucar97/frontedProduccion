@@ -87,9 +87,6 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
 
         serviceCRUD.TypePost('actividad/obtener_rubrica', params).then(function (res) {
 
-
-
-
             if (res.data.succeed == false) {
                 Swal.fire({
                     title: 'Aviso!',
@@ -212,26 +209,81 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
         }
     }
 
-
-    $scope.obtenerAuto = function () {
+    /**
+     *  $scope.obtenerAuto = function () {
         let params = {
             idActividad: $scope.actividad.idActividad,
             idAlumno: $scope.usuario.idUser,
         }
 
         serviceCRUD.TypePost('autoevaluacion/obtener_autoevaluacion', params).then(function (res) {
-            $scope.rubricaAuto = res.data;
-            if (res.data.nota == null) {
-                $scope.auTieneNota = false;
-                $scope.falta = false;
-                $scope.flgCalificado = false;
+            if (res.data.succeed == false) {
+                Swal.fire({
+                    title: 'Aviso!',
+                    text: 'No existe una autoevaluación',
+                    type: 'warning',
+                    confirmButtonText: 'Ok'
+                })
+                $scope.rubricaAuto = null;
             } else {
-                $scope.auTieneNota = true;
-                $scope.falta = true;
-                $scope.flgCalificado = true;
+                $scope.rubricaAuto = res.data;
+                if (res.data.nota == null) {
+                    $scope.auTieneNota = false;
+                    $scope.falta = false;
+                    $scope.flgCalificado = false;
+                } else {
+                    $scope.auTieneNota = true;
+                    $scope.falta = true;
+                    $scope.flgCalificado = true;
+                }
             }
-            //$scope.hayEncuesta=false;
         })
+    }
+     */
+   
+
+    $scope.obtenerAuto = function () {
+        let aux = {
+            idActividad: $scope.actividad.idActividad,
+            tipo: 2,
+        }
+
+        serviceCRUD.TypePost('actividad/obtener_rubrica', aux).then(function (res) {
+            if (res.data.succeed == false) {
+                Swal.fire({
+                    title: 'Aviso!',
+                    text: 'No existe una autoevaluación',
+                    type: 'warning',
+                    confirmButtonText: 'Ok'
+                })
+                $scope.rubricaAuto = null;
+            } else {
+                let params = {
+                    idActividad: $scope.actividad.idActividad,
+                    idAlumno: $scope.usuario.idUser,
+                }
+
+                serviceCRUD.TypePost('autoevaluacion/obtener_autoevaluacion', params).then(function (res) {
+                    if (res.data.succeed == false) {
+                        $scope.rubricaAuto = null;
+                    } else {
+                        $scope.rubricaAuto = res.data;
+                        if (res.data.nota == null) {
+                            $scope.auTieneNota = false;
+                            $scope.falta = false;
+                            $scope.flgCalificado = false;
+                        } else {
+                            $scope.auTieneNota = true;
+                            $scope.falta = true;
+                            $scope.flgCalificado = true;
+                        }
+                    }
+                })
+
+            }
+
+        })
+
     }
 
     $scope.btnGuardarAutoEvaluacion = function () {

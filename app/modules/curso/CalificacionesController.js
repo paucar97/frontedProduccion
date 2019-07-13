@@ -5,6 +5,8 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     $rootScope.lstCursos = $cookies.getObject('cursos');
     $scope.curso = $cookies.getObject("cursoActual");
     $scope.actividad = $cookies.getObject("actividadActual");
+    console.dir($scope.actividad.flgEntregable);
+
     $scope.listaAl = [];
     $scope.listaGrupal = [];
     $scope.esActIndividual = false;
