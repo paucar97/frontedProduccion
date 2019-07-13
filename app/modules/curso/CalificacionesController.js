@@ -67,6 +67,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     }
 
     $scope.PuedeEditar = function () {
+        console.dir("CRJ");
         console.dir($scope.flgCalificado);
         console.dir($scope.flgEsProfe);
         console.dir($scope.flgMasUnProfe);
