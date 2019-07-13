@@ -187,7 +187,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 if ($scope.idalumno == '0') return;
                 $scope.editar = false;
                 mostrarEntregables($scope.idalumno);
-                if ($scope.actividad.flgMulticalificable == 1) {
+                if ($scope.actividad.flgMulticalificable == 1 && $scope.usuario.profesor) {
                     $scope.listaJps = null;
                     $scope.idJp = '0';
                     var params = {
@@ -206,6 +206,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                         idCalificador: $scope.usuario.idUser
                     }
                     serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno', params).then(function (res) {
+                        console.dir(res.data);
                         $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                         $scope.notaFinal = res.data.calificacion.nota;
                         $scope.flgEsProfe = res.data.flgEsProfe;
