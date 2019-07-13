@@ -15,14 +15,11 @@
       <button ng-click="btnCalificaciones()" class="btn btn-info" style="margin: 2px;"><i
           class="fas fa-check"></i>&nbsp;Calificaciones</button>
       <button ng-click="btnRubrica()" ng-show="usuario.profesor" class="btn btn-info" style="margin: 2px;"><i
-          class="fas fa-scroll"></i>&nbsp;Hojas
-        de
-        evaluación</button>
+          class="fas fa-scroll"></i>&nbsp;Hojas de evaluación</button>
       <button ng-if="actividad.tipo=='G'" ng-click="btnGrupos()" type="button" class="btn btn-info"
         style="margin: 2px;"><i class="fas fa-users"></i>&nbsp;Grupos</button>
       <button ng-click="btnComentarios()" type="button" class="btn btn-info" style="margin: 2px;"><i
           class="fas fa-comments"></i>&nbsp;Comentarios</button>
-
       <button ng-show="usuario.profesor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
         id="dropdownMenuButton" type="button" class="btn btn-info" style="margin: 2px" ng-click="btnlistarAlarmas()"><i
           class="fas fa-bell"></i>&nbsp;Alertas</button>
