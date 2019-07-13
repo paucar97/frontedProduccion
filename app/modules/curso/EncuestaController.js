@@ -324,6 +324,9 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
             idAlumno: $scope.idalumno
         }
         serviceCRUD.TypePost('registro_horas/obtener_registro_horas_alumno', params).then(function (res) {
+            if(res.data.succeed == false){
+                console.dir('Estoy obteniendo el registro de horas x alumno y no funciono')
+            }
             $scope.regEsfuerzoHoras.idRegistroEsfuerzo = res.data.idRegistroEsfuerzo;
             $scope.regEsfuerzoHoras.tipo = res.data.tipo;
             $scope.regEsfuerzoHoras.idAlumno = $scope.idalumno
@@ -332,6 +335,7 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
         })
     }
 
+    //Como alumno: Obtener mi registro de horas
     $scope.obtenerRegHorasComoAlumno = function () {
         var params = {
             tipo: 1,
@@ -381,7 +385,6 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
                 }
                 $scope.hayRegCategoriasActividad = true;
             }
-
         })
     }
 
