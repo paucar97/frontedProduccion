@@ -14,12 +14,13 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     $scope.idRub = null;
     $scope.idalumno = 0;
     $scope.profe = $scope.usuario.profesor;
-    $scope.notaFinal = 0;
+    $scope.notaFinal =0;
     $scope.flgCalificado = null;
     $scope.editar = null;
     $scope.auxNotaNivel = 0;
     $scope.nomRubrica = "";
     $scope.getColor = "";
+    $scope.notaSugerida=0;
     $scope.rubrica = {
         flgRubricaEspecial: 0,
         idUsuarioCreador: $scope.usuario.idUser,
@@ -164,7 +165,8 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno', params).then(function (res) {
                     $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                     $scope.notaFinal = res.data.calificacion.nota;
-
+                    console.dir($scope.rubrica.listaNotaAspectos);
+                    
                     $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
                     $scope.falta = res.data.calificacion.flgFalta == 1;
                     for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
@@ -543,16 +545,21 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
         }
     }
 
-    $scope.sumarNotaFinal=function(nota){
-        if($scope.notaFinal==null){
-            $scope.notaFinal=0;
+    $scope.sumarNotaFinal=function(){
+        $scope.notaSugerida=0;
+        for (let i=0;i<$scope.rubrica.listaNotaAspectos.length;i++){
+            
+            if($scope.rubrica.listaNotaAspectos[i].tipoClasificacion!=3){
+                if($scope.rubrica.listaNotaAspectos[i].nota!=null){
+                    $scope.notaSugerida+=parseInt($scope.rubrica.listaNotaAspectos[i].nota);
+           
+
+                }
+            }
         }
-        $scope.notFinal+=parseInt(nota);
+        return $scope.notaSugerida;
     }
 
-    $scope.mostrarnotaFinal=function(){
-        $scope.notaFinal=$scope.notFinal;
-    }
 
     $scope.btnSubir = function () {
         file = document.getElementById('file').files;
