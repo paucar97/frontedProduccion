@@ -17,7 +17,8 @@
             <select ng-change="ObtenerNotas()" class="form-control custom-select" ng-model="idalumno"
                 ng-init="idalumno = '0'">
                 <option value="0">Seleccione</option>
-                <option ng-repeat="item in listaAl" ng-value="item.idAlumno" >{{item.codigoPUCP +" - "+ item.nombre}}</option>
+                <option ng-repeat="item in listaAl" ng-value="item.idAlumno">{{item.codigoPUCP +" - "+ item.nombre}}
+                </option>
             </select>
         </div>
         <div ng-show="!esActIndividual && mostrar && !usuario.alumno && (usuario.profesor || usuario.jp)"
@@ -62,11 +63,11 @@
         </div>
         <div ng-show="idalumno!='0' || idgrupo!='0'" class="form-group col-md-3">
             <div>
-                <button ng-show="!usuario.alumno && flgCalificado" type="button" class="btn btn-warning" 
+                <button ng-show="flgCalificado && (usuario.profesor)" type="button" class="btn btn-warning"
                     ng-click="btnEditar()"><i class="fas fa-pen"></i>&nbsp;Editar</button>
-                <button ng-show="!usuario.alumno && profe" class="btn btn-success" type="submit" 
-                    ng-click="btnValidarPuntaje()">Validar
-                    Resultados</button>
+                <button ng-show="usuario.profesor || usuario.jp" class="btn btn-success" type="submit"
+                    ng-click="btnValidarPuntaje()">Publicar
+                    resultados</button>
             </div>
         </div>
     </div>
@@ -258,14 +259,14 @@
             </div>
 
     </form>
-    <div ng-show="profe" class="form-group col-sm-2">
+    <div ng-show="usuario.profesor || usuario.jp" class="form-group col-sm-2">
         <button class="btn btn-primary" type="submit" ng-show="!flgCalificado || edita"
             ng-click="btnGuardarPuntaje()">Guardar</button>
     </div>
-    <div ng-show="esJP" class="form-group col-sm-2">
+    <!-- <div ng-show="usuario.jp" class="form-group col-sm-2">
         <button class="btn btn-primary" type="submit" ng-show="!flgCalificado || edita"
             ng-click="btnCalificarComoJP()">Calificar</button>
-    </div>
+    </div> -->
     <script>
         $(document).ready(function () {
             bsCustomFileInput.init()
