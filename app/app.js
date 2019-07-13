@@ -1,5 +1,5 @@
 var app = angular.module('appFS', ['ng', 'ngRoute', 'ngCookies', 'ServiceCRUD', 'ServiceUtil']);
-var indexURL = "http://127.0.0.1:5500/index.html#!/";
+var indexURL = "http://200.16.7.185:5500/index.html#!/";
 
 app.config(function ($routeProvider, $httpProvider) {
     $httpProvider.defaults.headers.post = { 'Content-Type': 'application/json; charset=utf-8' };
