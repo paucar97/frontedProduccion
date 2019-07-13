@@ -113,13 +113,17 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     }
 
     $scope.PuedeEditar = function () {
+        console.dir("entro a editar");
         console.dir($scope.flgCalificado);
-        console.dir($scope.flgEsProfe);
-        console.dir($scope.flgMasUnProfe);
+        
+        console.dir($scope.mostrareditar);
         if($scope.flgCalificado==1){
+            console.dir($scope.flgEsProfe);
             if($scope.flgEsProfe==1){
+                console.dir($scope.flgMasUnProfe);
                 //es profe
                 if($scope.flgMasUnProfe==1){
+                    console.dir($scope.flgEsProfe);
                     console.dir("entro 1");
                     if($scope.idCalificadorEsProfe && 
                         ($scope.usuario.idUser != $scope.idCalificador)){
@@ -130,6 +134,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                         $scope.mostrareditar=true;
                     }
                 }else{
+                    console.dir("entroooooooooo");
                     $scope.mostrareditar=true;
                     console.dir("entroooooooooo");
                 }
@@ -331,7 +336,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
         for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
             if ($scope.rubrica.listaNotaAspectos[i].nota > $scope.rubrica.listaNotaAspectos[i].puntajeMax) {
                 swalWithBootstrapButtons.fire({
-                    title: '¡Eror!',
+                    title: '¡Error!',
                     text: 'No se pueden ingresar puntajes mayores a los máximos establecidos.',
                     type: 'error',
 
@@ -860,7 +865,10 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno', params).then(function (res) {
                     $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                     $scope.notaFinal = res.data.calificacion.nota;
-
+                    $scope.flgEsProfe = res.data.flgEsProfe;
+                    $scope.flgMasUnProfe =res.data.flgMasUnoProfe;
+                    $scope.idCalificadorEsProfe =res.data.flgIdCalificadorEsProfe;
+                    $scope.idCalificador =res.data.idCalificador;
                     $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
                     $scope.falta = res.data.calificacion.flgFalta == 1;
                     for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
@@ -868,6 +876,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                             $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
                         }
                     }
+                    $scope.PuedeEditar();
                 })
 
             }
@@ -918,13 +927,19 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                     console.dir(res.data);
                     $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                     $scope.notaFinal = res.data.calificacion.nota;
-                    $scope.flgCalificado = res.data.flgCalificado;
+                    //$scope.flgCalificado = res.data.flgCalificado;
+                    $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
+                    $scope.flgEsProfe = res.data.flgEsProfe;
+                    $scope.flgMasUnProfe =res.data.flgMasUnoProfe;
+                    $scope.idCalificadorEsProfe =res.data.flgIdCalificadorEsProfe;
+                    $scope.idCalificador =res.data.idCalificador;
                     $scope.falta = res.data.calificacion.flgFalta == 1;
                     for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
                         if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) {
                             $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
                         }
                     }
+                    $scope.PuedeEditar();
                 })
             }
         }
