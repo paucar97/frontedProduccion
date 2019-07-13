@@ -19,6 +19,13 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
     $scope.flgCrear=false;
     $scope.flgVer = false;
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
     //Como me encuentro en la actividad, el tipo es 1 y el idActividadUHorario es idActividad
     $scope.regEsfuerzo = {
         tipo: 1,
@@ -304,6 +311,7 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
                 type: 'success',
                 title: 'Se registraron las horas correctamente'
             })
+            $scope.obtenerRegHorasComoAlumno();
         })
     }
 
@@ -346,19 +354,6 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
     }
 
 
-    //Como profesor: Agregar una categoria
-    $scope.btnAgregarCategoria = function () {
-        $scope.regEsfuerzo.listaCategorias.push({
-            descripcion: ''
-        });
-    }
-
-    //Como profesor: Quitar una categoria
-    $scope.btnQuitarCategoria = function (categoria) {
-        var pos = $scope.regEsfuerzo.listaCategorias.indexOf(categoria)
-        $scope.regEsfuerzo.listaCategorias.splice(pos, 1)
-    }
-
     //Como alumno puedo agregar una respuesta a una categoria
     $scope.btnAgregarRespuesta = function (categoria) {
         var pos = $scope.regEsfuerzoHoras.listaCategorias.indexOf(categoria)
@@ -368,6 +363,9 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
             horasPlanificadas: null,
             horasReales: null
         })
+
+
+
     }
 
     //Como alumno: Quitar una respuesta de una categoria
