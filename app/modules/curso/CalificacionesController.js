@@ -58,53 +58,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 }
             }
         }
-        if ($scope.actividad.tipo == "I" || $scope.usuario.alumno) {
-            if ($scope.usuario.alumno == 1) {
-                $scope.idalumno = $scope.usuario.idUser;
-            }
-            else if ($scope.idalumno == '0') return;
-            $scope.editar = false;
-            mostrarEntregables($scope.idalumno);
-            var params = {
-                idAlumno: $scope.idalumno,
-                idActividad: $scope.actividad.idActividad,
-                tipo: 4,
-                idCalificador: $scope.usuario.idUser
-            }
-            serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno', params).then(function (res) {
-                $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
-                $scope.notaFinal = res.data.calificacion.nota;
-                $scope.Calificado = res.data.flgCalificado;
-                $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
-                $scope.falta = res.data.calificacion.flgFalta == 1;
-                for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                    if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) {
-                        $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
-                    }
-                }
-            })
-        }
-        else {
-            if ($scope.idgrupo == '0') return;
-            $scope.editar = false;
-            var params = {
-                idActividad: $scope.actividad.idActividad,
-                idGrupo: $scope.idgrupo,
-                idJp: $scope.usuario.idUser,
-                idRubrica: $scope.idRub,
-            }
-            serviceCRUD.TypePost('actividad/alumnos/obtener_nota_grupo', params).then(function (res) {
-                $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
-                $scope.notaFinal = res.data.calificacion.nota;
-                $scope.flgCalificado = res.data.flgCalificado;
-                $scope.falta = res.data.calificacion.flgFalta == 1;
-                for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-                    if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) {
-                        $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
-                    }
-                }
-            })
-        }
+        $scope.ObtenerNotas();
     }
 
     $scope.btnEditar = function () {
@@ -328,15 +282,18 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
             }
         }
 
-        for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
-            if ($scope.rubrica.listaNotaAspectos[i].nota > $scope.rubrica.listaNotaAspectos[i].puntajeMax) {
-                swalWithBootstrapButtons.fire({
-                    title: '¡Eror!',
-                    text: 'No se pueden ingresar puntajes mayores a los máximos establecidos.',
-                    type: 'error',
+        for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++){
+            if($scope.rubrica.listaNotaAspectos[i].tipoClasificacion!=3){
+                if($scope.rubrica.listaNotaAspectos[i].nota>$scope.rubrica.listaNotaAspectos[i].puntajeMax){
+                    swalWithBootstrapButtons.fire({
+                        title:'¡Eror!',
+                        text:'No se pueden ingresar puntajes mayores a los máximos establecidos.',
+                        type:'error',
+                        
+                    })
+                    return;
+                }
 
-                })
-                return;
             }
         }
 
