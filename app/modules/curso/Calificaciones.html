@@ -16,7 +16,7 @@
             <label style="font-weight: bold">Alumno</label>
             <select ng-change="ObtenerNotas()" class="form-control custom-select" ng-model="idalumno"
                 ng-init="idalumno = '0'">
-                <option value="0">Seleccione</option>
+                <option ng-if="idalumno=='0'" value="0">Seleccione</option>
                 <option ng-repeat="item in listaAl" ng-value="item.idAlumno">{{item.codigoPUCP +" - "+ item.nombre}}
                 </option>
             </select>
@@ -26,7 +26,7 @@
             <label style="font-weight: bold">Grupo</label>
             <select ng-change="ObtenerNotas()" class="form-control custom-select" ng-model="idgrupo"
                 ng-init="idgrupo = '0'">
-                <option value="0">Seleccione</option>
+                <option ng-if="idgrupo=='0'" value="0">Seleccione</option>
                 <option ng-repeat="grupo in listaGrupal" ng-value="grupo.idGrupo">{{grupo.nombreGrupo}}
                 </option>
             </select>
