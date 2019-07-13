@@ -80,7 +80,6 @@
         </div>
     </div>
 
-    <div class="line"></div>
     <form id="formCal" name="formCal" class="needs-validation" novalidate>
         <div ng-show="(actividad.flgMulticalificable==0 && (idalumno!='0' || idgrupo!='0' || usuario.alumno)) || (actividad.flgMulticalificable==1 && idJp!='0')"
             class="card" style="background-color: rgb(135, 177, 166)">
@@ -220,7 +219,6 @@
 
                             </div>
                         </div>
-                        <div class="line"></div>
                     </div>
                     <div class="form-row" style="margin-left:1%; margin-bottom: 1%">
                         <div class="col-4" ng-if="aspecto.tipoClasificacion==1">
@@ -246,34 +244,34 @@
                 </div>
             </div>
         </div>
+        <div class="line"></div>
+
+        <div ng-show="(actividad.flgMulticalificable==0 && (idalumno!='0' || idgrupo!='0' || usuario.alumno)) || (actividad.flgMulticalificable==1 && idJp!='0')"
+            class="row justify-content-between">
+            <div class="form-group col-2" style="margin-left: 1%">
+                <label style="font-weight: bold;font-size: 1.7em ;color: rgb(5, 5, 5)">Nota Sugerida</label>
+                <div style="padding-left: 25px">
+                    <input disabled class="form-control" style="width: 60px; height: 50px; font-size: 1.3em;"
+                        ng-value="sumarNotaFinal()" maxlength="2" required>
+                </div>
+            </div>
+            <div class="form-group col-2">
+                <label style="font-weight: bold;font-size: 1.7em ;color: rgb(5, 5, 5)">Nota Final</label>
+                <div style="padding-left: 25px">
+                    <input onkeypress="return event.charCode >= 48 && event.charCode <= 57" type="text"
+                        class="form-control" style="width: 60px; height: 50px; font-size: 1.3em;"
+                        ng-disabled="flgCalificado==1 && actividad.flgMulticalificable==0" ng-model="notaFinal"
+                        maxlength="2" required>
+                </div>
+            </div>
+            <div ng-show="(usuario.profesor || usuario.jp) && ((!flgCalificado || actividad.flgMulticalificable==1) || edita)"
+                class="form-group col-sm-2 d-flex align-items-center">
+                <button class="btn btn-primary" type="submit" ng-click="btnGuardarPuntaje()">Guardar</button>
+            </div>
+        </div>
     </form>
 </div>
 
-<div class="line"></div>
-
-<div ng-show="(actividad.flgMulticalificable==0 && (idalumno!='0' || idgrupo!='0' || usuario.alumno)) || (actividad.flgMulticalificable==1 && idJp!='0')"
-    class="row justify-content-between">
-    <div class="form-group col-2" style="margin-left: 1%">
-        <label style="font-weight: bold;font-size: 1.7em ;color: rgb(5, 5, 5)">Nota Sugerida</label>
-        <div style="padding-left: 25px">
-            <input disabled class="form-control" style="width: 60px; height: 50px; font-size: 1.3em;"
-                ng-value="sumarNotaFinal()" maxlength="2" required>
-        </div>
-    </div>
-    <div class="form-group col-2">
-        <label style="font-weight: bold;font-size: 1.7em ;color: rgb(5, 5, 5)">Nota Final</label>
-        <div style="padding-left: 25px">
-            <input onkeypress="return event.charCode >= 48 && event.charCode <= 57" type="text" class="form-control"
-                style="width: 60px; height: 50px; font-size: 1.3em;"
-                ng-disabled="flgCalificado==1 && actividad.flgMulticalificable==0" ng-model="notaFinal" maxlength="2"
-                required>
-        </div>
-    </div>
-    <div ng-show="(usuario.profesor || usuario.jp) && ((!flgCalificado || actividad.flgMulticalificable==1) || edita)"
-        class="form-group col-sm-2 d-flex align-items-center">
-        <button class="btn btn-primary" type="submit" ng-click="btnGuardarPuntaje()">Guardar</button>
-    </div>
-</div>
 <!-- <div ng-show="usuario.jp" class="form-group col-sm-2">
         <button class="btn btn-primary" type="submit" ng-show="!flgCalificado || edita"
             ng-click="btnCalificarComoJP()">Calificar</button>
