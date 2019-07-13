@@ -111,6 +111,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     }
     //sacar de frende de lista aspectos
     $scope.ObtenerNotas = function () {
+        
         if ($scope.actividad.tipo == "I") {
             if ($scope.usuario.alumno == 1) {
                 if ($scope.usuario.alumno == 1) {
@@ -644,9 +645,19 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
             tipo: 4,
         }
         serviceCRUD.TypePost('actividad/obtener_rubrica', params).then(function (res) {
-            $scope.rubrica.listaNotaAspectos = res.data.listaAspectos;
-            $scope.idRub = res.data.idRubrica;
-            $scope.rubrica.nombreRubrica = res.data.nombreRubrica
+            if (res.data.succeed == false) {
+                Swal.fire({
+                    title: 'Aviso!',
+                    text: 'No existe una Rubria de Evaluacion',
+                    type: 'warning',
+                    confirmButtonText: 'Ok'
+                })
+                $scope.rubrica = null;
+            } else {
+                $scope.rubrica.listaNotaAspectos = res.data.listaAspectos;
+                $scope.idRub = res.data.idRubrica;
+                $scope.rubrica.nombreRubrica = res.data.nombreRubrica
+            }
         })
     }
 
