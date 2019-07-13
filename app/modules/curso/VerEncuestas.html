@@ -218,13 +218,13 @@
                   <tr>
                     <th scope="col">Alumnos\Aspectos</th>
                     <th ng-repeat="asp in lstAspectos" scope="col">
-                      {{asp.nombreAspecto + " Ptj. Max ("+(asp.maxPuntaje*(coEval.length-1))+")"}}</th>
+                      {{asp.nombreAspecto + " Ptj. Max ("+(asp.maxPuntaje)+")"}}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr ng-repeat="al in coEval">
                     <td>{{al.nombreAlumno}}</td>
-                    <td ng-repeat="aspe in al.nombreAspectos">{{aspe.nota}}</td>
+                    <td ng-repeat="aspe in al.nombreAspectos">{{aspe.nota/aspe.cuentaCalificados | number : 2}}</td>
                   </tr>
                 </tbody>
               </table>

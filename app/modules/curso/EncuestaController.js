@@ -62,6 +62,14 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
         })
     }
 
+    $scope.elegirNivel = function (nivel, indi, asp) {
+        indi.nota = nivel.puntaje;
+        asp.nota = 0;
+        for (let i = 0; i < asp.listaNotaIndicador.length; i++) {
+            asp.nota += asp.listaNotaIndicador[i].nota;
+        }
+    }
+
     $scope.marcado = function () {
         $scope.falta = true;
         $scope.flgCalificado = true;
