@@ -14,7 +14,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
     $scope.idRub = null;
     $scope.idalumno = 0;
     $scope.profe = $scope.usuario.profesor;
-    $scope.notaFinal = null;
+    $scope.notaFinal = 0;
     $scope.flgCalificado = null;
     $scope.editar = null;
     $scope.auxNotaNivel = 0;
@@ -542,6 +542,18 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
 
         }
     }
+
+    $scope.sumarNotaFinal=function(nota){
+        if($scope.notaFinal==null){
+            $scope.notaFinal=0;
+        }
+        $scope.notFinal+=parseInt(nota);
+    }
+
+    $scope.mostrarnotaFinal=function(){
+        $scope.notaFinal=$scope.notFinal;
+    }
+
     $scope.btnSubir = function () {
         file = document.getElementById('file').files;
         var datos = new FormData();
