@@ -171,7 +171,9 @@
                   -->
                   <div class="form-group col-md-5 col-lg-4">
                     <label style="font-weight: bold">Marque si considera correcto</label><br>
-                    <input ng-disabled="flgCalificado" ng-model="falta" ng-click="marcado()" type="checkbox">
+                    <div class="d-flex justify-content-center align-items-center">
+                      <input  style="height:25px;width:25px" ng-disabled="auTieneNota" ng-model="aspecto.nota"  type="checkbox">
+                    </div>
                   </div>
 
                 </div>
