@@ -19,6 +19,13 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
     $scope.flgCrear=false;
     $scope.flgVer = false;
 
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false,
+    })
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -168,6 +175,22 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
     }
 
     $scope.btnGuardarCo = function () {
+
+        for (let i = 0; i < $scope.rubricaCoauto.listaNotaAspectos.length; i++) {
+            if($scope.rubricaCoauto.listaNotaAspectos[i].tipoClasificacion==2){
+                if($scope.rubricaCoauto.listaNotaAspectos[i].nota>$scope.rubricaCoauto.listaNotaAspectos[i].puntajeMax){
+                    swalWithBootstrapButtons.fire({
+                        title: '¡Eror!',
+                        text: 'No se pueden ingresar puntajes mayores a los máximos establecidos.',
+                        type: 'error',
+                    })
+                    return;
+                }
+                
+            }
+          
+        }
+
         if (formCo.checkValidity()) {
             //cond para no exceder puntaje max
 
@@ -331,7 +354,23 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
     }
 
     $scope.btnGuardarAutoEvaluacion = function () {
-        if (formCo.checkValidity()) {
+
+        for (let i = 0; i < $scope.rubricaAuto.listaNotaAspectos.length; i++) {
+            if($scope.rubricaAuto.listaNotaAspectos[i].tipoClasificacion==2){
+                if($scope.rubricaAuto.listaNotaAspectos[i].nota>$scope.rubricaAuto.listaNotaAspectos[i].puntajeMax){
+                    swalWithBootstrapButtons.fire({
+                        title: '¡Eror!',
+                        text: 'No se pueden ingresar puntajes mayores a los máximos establecidos.',
+                        type: 'error',
+                    })
+                    return;
+                }
+                
+            }
+          
+        }
+
+        if (formAuto.checkValidity()) {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
