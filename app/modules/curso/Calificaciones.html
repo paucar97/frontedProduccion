@@ -92,19 +92,19 @@
                             class="form-row">
                             <h3 style="color: rgb(5, 5, 105)"><b> Indicador </b></h3>
                             <div class="col-12">
-                                <div class="form-group col-sm-3">
+                                <div class="form-group col-sm-4">
                                     <label style="color: rgb(5, 5, 5)">Descripción</label>
                                     <input disabled type="text" class="form-control" ng-model="indicador.descripcion">
                                 </div>
                                 <h3 style="color: rgb(5, 5, 105)"><b> Niveles de Desempeño</b></h3>
                                 <div ng-repeat="nivel in indicador.listaNiveles">
                                     <div class="row">
-                                        <div class="col-2">
+                                        <div class="col-4">
                                             <label style="color: rgb(5, 5, 5)"><b> Descripción </b></label>
-                                            <input disabled type="text" class="form-control"
-                                                ng-model="nivel.descripcion">
+                                            <textarea style="resize: none" disabled type="text" class="form-control"
+                                                ng-model="nivel.descripcion"></textarea>
                                         </div>
-                                        <div class="col-1">
+                                        <div class="col-2">
                                             <label style="color: rgb(5, 5, 5)"><b> Puntaje </b></label>
                                             <input style="width: 70px" disabled type="text" class="form-control"
                                                 ng-model="nivel.puntaje">
