@@ -654,12 +654,12 @@ app.controller('CursoController', function ($rootScope, $scope, $location, $cook
         ListarActividades();
         ListarAgrupaciones();
         hayAgrupaciones();
-        obtenerRegistroHorasSoloCategorias();
+        //obtenerRegistroHorasSoloCategorias();
         ListarAlumnos();
 
 
-        if (!$scope.esProfesor)
-            obtenerRegHorasComoAlumno();
+        //if (!$scope.esProfesor)
+            //obtenerRegHorasComoAlumno();
     }
 
     init();
