@@ -149,6 +149,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                         tipo: 4,
                         idCalificador: $scope.usuario.idUser
                     }
+                    console.dir(params);
                     serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno', params).then(function (res) {
                         console.dir(res.data);
                         $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
@@ -288,7 +289,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
         if ($scope.falta == false) {
             if (formCal.checkValidity()) {
                 swalWithBootstrapButtons.fire({
-                    title: 'Está seguro que quiere calificar al alumno con la nota "' + $scope.notaFinal + '" ?',
+                    title: '¿Está seguro que quiere calificar al alumno con la nota "' + $scope.notaFinal + '" ?',
                     text: "Si debe cambiar algo, cancele",
                     type: 'warning',
                     showCancelButton: true,
@@ -319,7 +320,6 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                                 $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota ? 1 : 0;
                             }
                         }
-
                         if ($scope.editar == false) {
                             if ($scope.actividad.tipo == "I") {
                                 var params = {
@@ -371,6 +371,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                                     listaNotaAspectos: $scope.rubrica.listaNotaAspectos,
                                     flgCompleto: 1,
                                 }
+                                console.dir(JSON.stringify(params));
                                 serviceCRUD.TypePost('actividad/alumnos/editar_nota', params).then(function (res) {
                                     for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
                                         if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
@@ -397,19 +398,15 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                                     $scope.ObtenerNotas();
                                 })
                             }
-
-
                         }
                     } else if (
                         result.dismiss === Swal.DismissReason.cancel
                     ) {
                         swalWithBootstrapButtons.fire(
                             'Se canceló la calificación',
-
                         )
                     }
                 })
-
             }
             else {
                 Swal.fire({
@@ -419,7 +416,6 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                     confirmButtonText: 'Ok'
                 })
             }
-
         } else {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
@@ -428,7 +424,6 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 },
                 buttonsStyling: false,
             })
-
             swalWithBootstrapButtons.fire({
                 title: 'Se asignará una falta al alumno en cuestión',
                 text: "Si debe cambiar algo, cancele",
@@ -513,6 +508,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                                 listaNotaAspectos: $scope.rubrica.listaNotaAspectos,
                                 flgCompleto: 1,
                             }
+                            console.dir(params);
                             serviceCRUD.TypePost('actividad/alumnos/editar_nota', params).then(function (res) {
                                 for (let i = 0; i < $scope.rubrica.listaNotaAspectos.length; i++) {
                                     if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion == 3) $scope.rubrica.listaNotaAspectos[i].nota = $scope.rubrica.listaNotaAspectos[i].nota == 1;
@@ -571,6 +567,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 notaFinal: $scope.notaFinalFinal
             }
             serviceCRUD.TypePost('multicalificable/elegir_nota', params).then(function (res) {
+                $scope.tieneNotaFinalFinal = true;
             })
         } else {
             var params = {
@@ -579,6 +576,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                 notaFinal: $scope.notaFinalFinal
             }
             serviceCRUD.TypePost('actividad/elegir_nota_grupal', params).then(function (res) {
+                $scope.tieneNotaFinalFinal = true;
             })
         }
     }
@@ -803,7 +801,6 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                     idCalificador: $scope.idJp
                 }
                 serviceCRUD.TypePost('actividad/alumnos/obtener_nota_alumno_publicada', params).then(function (res) {
-
                     if (res.data.succeed == false) {
                         Swal.fire({
                             title: 'Error!',
@@ -813,7 +810,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
                         })
                         $scope.rubrica = null;
                     } else {
-
+                        $scope.notaFinalFinal = res.data.notaFinal;
                         $scope.rubrica.listaNotaAspectos = res.data.calificacion.listaNotaAspectos;
                         $scope.notaFinal = res.data.calificacion.nota;
                         $scope.flgCalificado = $scope.usuario.alumno == 1 ? true : res.data.flgCalificado;
