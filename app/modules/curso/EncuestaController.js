@@ -19,6 +19,13 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
     $scope.flgCrear=false;
     $scope.flgVer = false;
 
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false,
+    })
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -71,7 +78,7 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
     }
 
     $scope.marcado = function () {
-        $scope.falta = true;
+      
         $scope.flgCalificado = true;
     }
 
@@ -168,6 +175,22 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
     }
 
     $scope.btnGuardarCo = function () {
+
+        for (let i = 0; i < $scope.rubricaCoauto.listaNotaAspectos.length; i++) {
+            if($scope.rubricaCoauto.listaNotaAspectos[i].tipoClasificacion==2){
+                if($scope.rubricaCoauto.listaNotaAspectos[i].nota>$scope.rubricaCoauto.listaNotaAspectos[i].puntajeMax){
+                    swalWithBootstrapButtons.fire({
+                        title: '¡Eror!',
+                        text: 'No se pueden ingresar puntajes mayores a los máximos establecidos.',
+                        type: 'error',
+                    })
+                    return;
+                }
+                
+            }
+          
+        }
+
         if (formCo.checkValidity()) {
             //cond para no exceder puntaje max
 
@@ -275,51 +298,79 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
    
 
     $scope.obtenerAuto = function () {
-        let aux = {
-            idActividad: $scope.actividad.idActividad,
-            tipo: 2,
-        }
+        
+            let aux = {
+                idActividad: $scope.actividad.idActividad,
+                tipo: 2,
+            }
 
-        serviceCRUD.TypePost('actividad/obtener_rubrica', aux).then(function (res) {
-            if (res.data.succeed == false) {
-                Swal.fire({
-                    title: 'Aviso!',
-                    text: 'No existe una autoevaluación',
-                    type: 'warning',
-                    confirmButtonText: 'Ok'
-                })
-                $scope.rubricaAuto = null;
-            } else {
-                let params = {
-                    idActividad: $scope.actividad.idActividad,
-                    idAlumno: $scope.usuario.idUser,
-                }
-
-                serviceCRUD.TypePost('autoevaluacion/obtener_autoevaluacion', params).then(function (res) {
-                    if (res.data.succeed == false) {
-                        $scope.rubricaAuto = null;
-                    } else {
-                        $scope.rubricaAuto = res.data;
-                        if (res.data.nota == null) {
-                            $scope.auTieneNota = false;
-                            $scope.falta = false;
-                            $scope.flgCalificado = false;
-                        } else {
-                            $scope.auTieneNota = true;
-                            $scope.falta = true;
-                            $scope.flgCalificado = true;
-                        }
+            serviceCRUD.TypePost('actividad/obtener_rubrica', aux).then(function (res) {
+                if (res.data.succeed == false) {
+                    Swal.fire({
+                        title: 'Aviso!',
+                        text: 'No existe una autoevaluación',
+                        type: 'warning',
+                        confirmButtonText: 'Ok'
+                    })
+                    $scope.rubricaAuto = null;
+                } else {
+                    let params = {
+                        idActividad: $scope.actividad.idActividad,
+                        idAlumno: $scope.usuario.idUser,
                     }
+
+                    serviceCRUD.TypePost('autoevaluacion/obtener_autoevaluacion', params).then(function (res) {
+                       
+                            $scope.rubricaAuto = res.data;
+                            console.dir(res.data);          
+                                for (let i = 0; i < $scope.rubricaAuto.listaNotaAspectos.length; i++) {
+                                if($scope.rubricaAuto.listaNotaAspectos[i].tipoClasificacion==3){
+                                    $scope.rubricaAuto.listaNotaAspectos[i].nota = $scope.rubricaAuto.listaNotaAspectos[i].nota==1? true : false;
+                                }
+                      
+                            }
+                            if (res.data.succeed == false) {
+                                $scope.rubricaAuto = null;
+                            } else {
+                                $scope.rubricaAuto = res.data;
+                                if (res.data.nota == null) {
+                                    $scope.auTieneNota = false;
+                                
+                                    $scope.flgCalificado = false;
+                                } else {
+                                    $scope.auTieneNota = true;
+                                
+                                    $scope.flgCalificado = true;
+                                }
+                            }   
+                        
+                     
                 })
 
             }
 
         })
-
+        
     }
 
     $scope.btnGuardarAutoEvaluacion = function () {
-        if (formCo.checkValidity()) {
+
+        for (let i = 0; i < $scope.rubricaAuto.listaNotaAspectos.length; i++) {
+            if($scope.rubricaAuto.listaNotaAspectos[i].tipoClasificacion==2){
+                if($scope.rubricaAuto.listaNotaAspectos[i].nota>$scope.rubricaAuto.listaNotaAspectos[i].puntajeMax){
+                    swalWithBootstrapButtons.fire({
+                        title: '¡Eror!',
+                        text: 'No se pueden ingresar puntajes mayores a los máximos establecidos.',
+                        type: 'error',
+                    })
+                    return;
+                }
+                
+            }
+          
+        }
+
+        if (formAuto.checkValidity()) {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
@@ -342,21 +393,29 @@ app.controller('EncuestaController', function ($rootScope, $scope, $location, $c
                         'Listo!',
                         'success'
                     )
+                    for (let i = 0; i < $scope.rubricaAuto.listaNotaAspectos.length; i++) {
+                        if($scope.rubricaAuto.listaNotaAspectos[i].tipoClasificacion==3){
+                            $scope.rubricaAuto.listaNotaAspectos[i].nota = $scope.rubricaAuto.listaNotaAspectos[i].nota ? 1 : 0;
+                            
+                        }
+                      
+                    }
                     let params = {
                         idActividad: $scope.actividad.idActividad,
                         idAlumno: $scope.usuario.idUser,
                         idCalificador: $scope.usuario.idUser,
                         nota: 0,
                         idRubrica: $scope.rubricaAuto.idRubrica,
-                        flgFalta: $scope.falta ? 1 : 0,
+                        flgFalta:0,
                         listaNotaAspectos: $scope.rubricaAuto.listaNotaAspectos,
                         flgCompleto: 0,
                     }
 
                     serviceCRUD.TypePost('autoevaluacion/calificar_autoevaluacion', params).then(function (res) {
-                        $scope.flgCalificado = false ? 0 : 1;
+                        $scope.obtenerAuto();
+                        $scope.auTieneNota = true;
                     })
-                    $scope.auTieneNota = true;
+                    
                 } else if (
                     result.dismiss === Swal.DismissReason.cancel
                 ) {
