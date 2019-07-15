@@ -18,6 +18,7 @@ app.controller('CursoController', function ($rootScope, $scope, $location, $cook
     $scope.nuevo = true; // true->crear false->editar
     $scope.hoy = serviceUtil.yyyymmdd(new Date());
     $scope.busy = false;
+    $scope.tieneEntregable=false;
     $scope.showAlert1 = false;
     $scope.showAlert2 = false;
     $scope.showAlert3 = false;
