@@ -276,7 +276,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
             if ($scope.rubrica.listaNotaAspectos[i].tipoClasificacion != 3) {
                 if ($scope.rubrica.listaNotaAspectos[i].nota > $scope.rubrica.listaNotaAspectos[i].puntajeMax) {
                     swalWithBootstrapButtons.fire({
-                        title: '¡Eror!',
+                        title: '¡Error!',
                         text: 'No se pueden ingresar puntajes mayores a los máximos establecidos.',
                         type: 'error',
                     })
@@ -696,7 +696,7 @@ app.controller('CalificacionesController', function ($rootScope, $scope, $locati
             if (res.data.succeed == false) {
                 Swal.fire({
                     title: 'Aviso!',
-                    text: 'No existe una Rubria de Evaluacion',
+                    text: 'No existe una Rubrica de Evaluacion',
                     type: 'warning',
                     confirmButtonText: 'Ok'
                 })
